@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>804</width>
-    <height>690</height>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,19 +53,6 @@
     </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:28pt;&quot;&gt;Linear Voltametry&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
-   <widget class="QProgressBar" name="progressBar">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>800</y>
-      <width>741</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>24</number>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -449,7 +436,7 @@
      <x>0</x>
      <y>0</y>
      <width>804</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -465,7 +452,7 @@
     <property name="title">
      <string>&amp;Methods</string>
     </property>
-    <addaction name="actionLinera"/>
+    <addaction name="actionLinear_Voltametry"/>
     <addaction name="actionCyclic_Voltametry"/>
     <addaction name="actionSquare_Wave_Voltametry"/>
    </widget>
@@ -502,7 +489,7 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionLinera">
+  <action name="actionLinear_Voltametry">
    <property name="text">
     <string>Linear Voltametry</string>
    </property>

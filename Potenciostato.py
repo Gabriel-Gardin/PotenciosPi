@@ -24,9 +24,11 @@ class main_window(form_main, base_main):
         msg = msg.information(self, 'Exit?', message, QMessageBox.Yes, QMessageBox.No)
         if msg == QMessageBox.Yes:
             event.accept()
+            super(base_main, self).closeEvent(event)     #CHama a função original do PyQt ao invés de sobre escrevela totalemnte
 
         else:
             event.ignore()
+
 
 
 class Linear_window(form_linear, base_linear):

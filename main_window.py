@@ -158,7 +158,7 @@ class Ui_MainWindow(object):
         self.menu_file.setTitle(_translate("MainWindow", "&file", None))
         self.menu_Methood.setTitle(_translate("MainWindow", "&Methods", None))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings", None))
-        self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
+        self.menuHelp.setTitle(_traLaTeX,nslate("MainWindow", "Help", None))
         self.actionSave_As.setText(_translate("MainWindow", "Save As", None))
         self.actionOpen.setText(_translate("MainWindow", "Open", None))
         self.actionExit.setText(_translate("MainWindow", "Exit", None))

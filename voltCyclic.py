@@ -3,7 +3,6 @@ from adcdac_module import AdcDac
 import RPi.GPIO as GPIO
 import time
 
-
 class CyclicVoltametry:
     def __init__(self,dac_sum,acq_points,delay_points,potIni=0,potFin=100,stepVolt=25,scanRate=50,ganho=1):
         self.dac_sum = dac_sum

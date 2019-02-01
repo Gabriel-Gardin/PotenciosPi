@@ -1,5 +1,5 @@
 
-from PyQt5 import uic
+from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from functools import partial
 import sys
@@ -23,8 +23,8 @@ class main_window(form_main, base_main):
         message = "Are you sure?"
         msg = msg.information(self, 'Exit?', message, QMessageBox.Yes, QMessageBox.No)
         if msg == QMessageBox.Yes:
+            super(base_main, self).closeEvent(event)  # CHama a função original do PyQt ao invés de sobre escrevela totalemnte
             event.accept()
-            super(base_main, self).closeEvent(event)     #CHama a função original do PyQt ao invés de sobre escrevela totalemnte
 
         else:
             event.ignore()
@@ -40,11 +40,48 @@ class Linear_window(form_linear, base_linear):
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
         self.actionExit.triggered.connect(self.close)
 
+    def run_linear(self):
+        if (self.checkBox.isChecked()):
+            preCond = int(self.linePreCond.text())
+            pre_time_cond = int(self.linePretime.text())
+            pot_pre_dep = int(self.linePreDep.text())
+            pre_deposition_time = int(self.linePreDepTime.text())
+
+            #i2 = PreDeposition(pot_cond=preCond, time_cond=pre_time_cond, pre_dep_pot=pot_pre_dep,
+            #                   pre_dep_time=pre_deposition_time, somadorDA=3.0)
+          #  i2.run()
+
+        print(self.lineVoltInitia.text())
+        potInii = int(self.lineVoltInitia.text())
+        potFinn = int(self.lineVoltFinal.text())
+        potStepp = int(self.lineVoltStep.text())
+        potScann = int(self.lineVoltScan.text())
+        potScanss = int(self.lineVoltScans.text())
+        acq_pointss = int(self.lineAcqPoint.text())
+        delay_pointss = int(self.lineDelayPoint.text())
+        ganhoo = int(self.spinBox.text())
+
+       # i1 = LinearVoltametry(dac_sum=3.0, acq_points=acq_pointss, delay_points=delay_pointss,
+       #                       potIni=potInii, potFin=potFinn, stepVolt=potStepp, ganho=ganhoo, scanRate=potScann)
+
+        Ydata = []
+        Xdata = []
+
+        #for x in i1.run():
+        #    Xdata.append(x[0])
+        #    Ydata.append(x[1])
+            #    print(Xdata[0],Ydata[0])
+            #    self.textBrowser.append(str([x[0],x[1]]))
+            #self.graphicsView.plot(Xdata, Ydata, clear=True)
+            #QtGui.QApplication.processEvents()
+            # print([x[0],x[1]])
+
     def closeEvent(self, event):
         msg = QMessageBox()
         message = "Are you sure?"
         msg = msg.information(self, 'Exit?', message, QMessageBox.Yes, QMessageBox.No)
         if msg == QMessageBox.Yes:
+            super(base_main, self).closeEvent(event)  # CHama a função original do PyQt ao invés de sobre escrevela totalemnte
             event.accept()
         else:
             event.ignore()
@@ -63,6 +100,7 @@ class Cyclic_window(form_cyclic, base_cyclic):
         message = "Are you sure?"
         msg = msg.information(self, 'Exit?', message, QMessageBox.Yes, QMessageBox.No)
         if msg == QMessageBox.Yes:
+            super(base_main, self).closeEvent(event)  # CHama a função original do PyQt ao invés de sobre escrevela totalemnte
             event.accept()
         else:
             event.ignore()
@@ -81,6 +119,7 @@ class SQW_window(form_SQW,base_SQW):
         message = "Are you sure?"
         msg = msg.information(self, 'Exit?', message, QMessageBox.Yes, QMessageBox.No)
         if msg == QMessageBox.Yes:
+            super(base_main, self).closeEvent(event)  # CHama a função original do PyQt ao invés de sobre escrevela totalemnte
             event.accept()
         else:
             event.ignore()

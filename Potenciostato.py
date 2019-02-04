@@ -3,11 +3,16 @@ from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from functools import partial
 import sys
+from voltLinear import LinearVoltametry
+from voltCyclic import CyclicVoltametry
+from voltSquare import SquareWaveVoltametry
+import pyqtgraph as pg
+from PreDeposition import PreDeposition
 
-form_main, base_main = uic.loadUiType('main_window.ui')
-form_linear, base_linear = uic.loadUiType('Linear_window.ui')
-form_cyclic, base_cyclic = uic.loadUiType('Cyclic_window.ui')
-form_SQW, base_SQW = uic.loadUiType('SQW_window.ui')
+form_main, base_main = uic.loadUiType('/home/pi/Desktop/PotenciosPi/main_window.ui')
+form_linear, base_linear = uic.loadUiType('/home/pi/Desktop/PotenciosPi/Linear_window.ui')
+form_cyclic, base_cyclic = uic.loadUiType('/home/pi/Desktop/PotenciosPi/Cyclic_window.ui')
+form_SQW, base_SQW = uic.loadUiType('/home/pi/Desktop/PotenciosPi/SQW_window.ui')
 
 class main_window(form_main, base_main):
     def __init__(self):
@@ -38,6 +43,7 @@ class Linear_window(form_linear, base_linear):
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
+        self.pushButton_2.clicked.connect(self.run_linear)
         self.actionExit.triggered.connect(self.close)
 
     def run_linear(self):
@@ -47,9 +53,9 @@ class Linear_window(form_linear, base_linear):
             pot_pre_dep = int(self.linePreDep.text())
             pre_deposition_time = int(self.linePreDepTime.text())
 
-            #i2 = PreDeposition(pot_cond=preCond, time_cond=pre_time_cond, pre_dep_pot=pot_pre_dep,
-            #                   pre_dep_time=pre_deposition_time, somadorDA=3.0)
-          #  i2.run()
+            i2 = PreDeposition(pot_cond=preCond, time_cond=pre_time_cond, pre_dep_pot=pot_pre_dep,
+                               pre_dep_time=pre_deposition_time, somadorDA=3.0)
+            i2.run()
 
         print(self.lineVoltInitia.text())
         potInii = int(self.lineVoltInitia.text())
@@ -61,20 +67,20 @@ class Linear_window(form_linear, base_linear):
         delay_pointss = int(self.lineDelayPoint.text())
         ganhoo = int(self.spinBox.text())
 
-       # i1 = LinearVoltametry(dac_sum=3.0, acq_points=acq_pointss, delay_points=delay_pointss,
-       #                       potIni=potInii, potFin=potFinn, stepVolt=potStepp, ganho=ganhoo, scanRate=potScann)
+        i1 = LinearVoltametry(dac_sum=3.0, acq_points=acq_pointss, delay_points=delay_pointss,
+                              potIni=potInii, potFin=potFinn, stepVolt=potStepp, ganho=ganhoo, scanRate=potScann)
 
         Ydata = []
         Xdata = []
 
-        #for x in i1.run():
-        #    Xdata.append(x[0])
-        #    Ydata.append(x[1])
-            #    print(Xdata[0],Ydata[0])
-            #    self.textBrowser.append(str([x[0],x[1]]))
-            #self.graphicsView.plot(Xdata, Ydata, clear=True)
-            #QtGui.QApplication.processEvents()
-            # print([x[0],x[1]])
+        for x in i1.run():
+            Xdata.append(x[0])
+            Ydata.append(x[1])
+            print(Xdata[0],Ydata[0])
+            self.textBrowser.append(str([x[0],x[1]]))
+            self.graphicsView.plot(Xdata, Ydata, clear=True)
+            QtGui.QApplication.processEvents()
+            print([x[0],x[1]])
 
     def closeEvent(self, event):
         msg = QMessageBox()

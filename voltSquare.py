@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 import time
 
 class SquareWaveVoltametry:
+    started = False
     def __init__(self, dac_sum,acq_points,delay_points,potIni=0,potFin=600,stepVolt=25,ganho=1,ampP=50,freq=10):
         self.dac_sum = dac_sum
         self.acq_points = acq_points
@@ -120,7 +121,7 @@ class SquareWaveVoltametry:
         ampCorr = self._ampP/1000
         cont = 0
         if self.potIni<self._potFin:
-            while potencialAp <= self._potFin:
+            while (potencialAp <= self._potFin and LinearVoltametry.started == True):
                 cont += 1
                 potencial = (potencialAp/1000)
                 pulso1 = potencial + ampCorr
@@ -151,4 +152,6 @@ class SquareWaveVoltametry:
                 correnteSQW = corrente - corrente2
                 potencialAp = potencialAp + self.stepVolt
                 yield (1000*potencial),(1000*correnteSQW)
+                
+        SquareWaveVoltametry.started = False
 

@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 import time
 
 class CyclicVoltametry:
+    started = False
     def __init__(self,dac_sum,acq_points,delay_points,potIni=0,potFin=100,stepVolt=25,scanRate=50,ganho=1):
         self.dac_sum = dac_sum
         self.acq_points = acq_points
@@ -86,6 +87,8 @@ class CyclicVoltametry:
     def ganho(self, var):
         if(not(isinstance(var,int))):
             raise ValueError("A variável ganho deve ser do tipo int {}".format(var))
+        elif(var <= 0):
+            raise ValueError("O ganho deve ser maior ou igual a 1 {}".format(var))
         self._ganho = var
 
     def run(self):
@@ -113,7 +116,7 @@ class CyclicVoltametry:
         potencialAp = self._potIni
         if self._potIni < self._potFin:
             tempo_inicial = time.time()
-            while potencialAp <= self._potFin:
+            while (potencialAp <= self._potFin and CyclicVoltametry.started == True):
                 potencial = (potencialAp/1000)
                 potR = self._dac_sum - potencial
                 _nowTime = time.time()
@@ -133,7 +136,7 @@ class CyclicVoltametry:
                 yield((1000 * potencial), (1000 * sinal))
                 
             potencialAp = potencialAp - (2*self._stepVolt)
-            while potencialAp >= self._potIni:
+            while (potencialAp >= self._potIni and CyclicVoltametry.started == True):
                 potencial = (potencialAp/1000)
                 potR = self._dac_sum - potencial
                 _nowTime = time.time()
@@ -153,7 +156,7 @@ class CyclicVoltametry:
 
         elif self._potIni > self._potFin:
             tempo_inicial = time.time()
-            while potencialAp >= self._potFin:
+            while (potencialAp >= self._potFin and CyclicVoltametry.started == True):
                 potencial = (potencialAp/1000)
                 potR = self._dac_sum - potencial
                 _nowTime = time.time()
@@ -172,7 +175,7 @@ class CyclicVoltametry:
                 yield((1000 * potencial), (1000 * sinal))
                 
             potencialAp = potencialAp + (2*self._stepVolt)
-            while potencialAp <= self._potIni:
+            while (potencialAp <= self._potIni and CyclicVoltametry.started == True):
                 potencial = (potencialAp/1000)
                 potR = self._dac_sum - potencial
                 _nowTime = time.time()
@@ -190,3 +193,4 @@ class CyclicVoltametry:
                 _tempo = time.time() 
                 yield((1000 * potencial), (1000 * sinal))
         print(tempo_inicial - time.time())
+        CyclicVoltametry.started = False

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>439</width>
-    <height>298</height>
+    <height>287</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,7 +56,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Reference potential (mV):&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Reference potential (V):&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_4">
@@ -72,26 +72,13 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Com o uso de um multímetro meça o potencial entre o eletrodo &lt;br/&gt;de trabalho e o referência. Altere o valor da tensão de referência&lt;br/&gt;até que a tensão aplicada seja igual a tensão lida no multímetro.&lt;br/&gt;Em &lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;seguida&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; clique em calibrar. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="bt_open_cell">
+  <widget class="QPushButton" name="bt_apply_pot">
    <property name="geometry">
     <rect>
      <x>120</x>
      <y>120</y>
-     <width>80</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Open Cell</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="bt_apply_pot">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>120</y>
-     <width>80</width>
-     <height>23</height>
+     <width>201</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">

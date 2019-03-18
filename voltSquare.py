@@ -153,5 +153,6 @@ class SquareWaveVoltametry:
                 potencialAp = potencialAp + self.stepVolt
                 yield (1000*potencial),(1000*correnteSQW)
                 
+        GPIO.cleanup()
         SquareWaveVoltametry.started = False
 

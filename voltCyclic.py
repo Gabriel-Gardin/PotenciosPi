@@ -192,5 +192,6 @@ class CyclicVoltametry:
                     time.sleep(_time - _elapsed_time)
                 _tempo = time.time() 
                 yield((1000 * potencial), (1000 * sinal))
+        GPIO.cleanup()
         print(tempo_inicial - time.time())
         CyclicVoltametry.started = False

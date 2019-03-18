@@ -7,8 +7,11 @@ import csv
 from voltLinear import LinearVoltametry
 from voltCyclic import CyclicVoltametry
 from voltSquare import SquareWaveVoltametry
+from voltCalibrate import CalibratePotential as calibrator
 import pyqtgraph as pg
 from PreDeposition import PreDeposition
+import RPi.GPIO as GPIO
+import json
 
 pg.setConfigOption('background', 'w')
 
@@ -16,6 +19,7 @@ form_main, base_main = uic.loadUiType('/home/pi/Desktop/PotenciosPi/main_window.
 form_linear, base_linear = uic.loadUiType('/home/pi/Desktop/PotenciosPi/Linear_window.ui')
 form_cyclic, base_cyclic = uic.loadUiType('/home/pi/Desktop/PotenciosPi/Cyclic_window.ui')
 form_SQW, base_SQW = uic.loadUiType('/home/pi/Desktop/PotenciosPi/SQW_window.ui')
+form_calibrate, base_calibrate = uic.loadUiType('/home/pi/Desktop/PotenciosPi/Calibrate_window.ui')
 
 class main_window(form_main, base_main):
     def __init__(self):
@@ -24,6 +28,7 @@ class main_window(form_main, base_main):
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
+        self.actionCalibrate.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
         self.actionExit.triggered.connect(self.close)
 
     def closeEvent(self, event):
@@ -43,9 +48,11 @@ class Linear_window(form_linear, base_linear):
     def __init__(self):
         super(base_linear, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle('Linear Voltametry')
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
+        self.actionCalibrate.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
         self.actionSave.triggered.connect(partial(save, obj=self))
         self.pushButton_2.clicked.connect(self.run_linear)
         self.pushButton.clicked.connect(self.stop)
@@ -116,9 +123,11 @@ class Cyclic_window(form_cyclic, base_cyclic):
     def __init__(self):
         super(base_cyclic, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle('Cyclic Voltametry')
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
+        self.actionCalibrate.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
         self.actionSave.triggered.connect(partial(save, obj=self))
         self.pushButton.clicked.connect(self.stop)
         self.pushButton_2.clicked.connect(self.run_cyclic)
@@ -185,9 +194,11 @@ class SQW_window(form_SQW,base_SQW):
     def __init__(self):
         super(base_SQW, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle('SQW voltametry')
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
+        self.actionCalibrate.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
         self.pushButton.clicked.connect(self.stop)
         self.actionSave.triggered.connect(partial(save, obj=self))
         self.pushButton_2.clicked.connect(self.run_SQW)
@@ -248,6 +259,39 @@ class SQW_window(form_SQW,base_SQW):
         else:
             event.ignore()
 
+class Calibrate_window(base_calibrate, form_calibrate):
+    def __init__(self):
+        super(base_calibrate, self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle('Calibrate')
+        self.text_pot.setText('500')
+        self.text_ref.setText('3')
+        self.bt_apply_pot.clicked.connect(self.run_calibrate)
+        self.bt_calibrate.clicked.connect(self.calibrar)
+
+    def run_calibrate(self):
+        appott = int(self.text_pot.text())
+        refpott = int(self.text_ref.text())
+        calibrar =  calibrator(applypotential = appott, refpot = refpott)
+        self.bt_apply_pot.disconnect()
+        self.bt_apply_pot.setText('Stop')
+        self.bt_apply_pot.clicked.connect(self.close_cell)
+        calibrar.apply_pot()
+
+    def close_cell(self):
+        self.bt_apply_pot.setText('Apply Pot')
+        self.bt_apply_pot.clicked.connect(self.run_calibrate)
+        GPIO.cleanup()
+
+    def calibrar(self):
+        data = {'refpot':(int(self.text_ref.text())/1000)}
+        print('aaaaaa')
+        print(type(data))
+        with open('/home/pi/Desktop/PotenciosPi/configs.json', 'w') as json_file:
+            json.dumps(data, json_file)
+
+        
+
 
 def save(obj):
     name = QFileDialog.getSaveFileName(obj, 'Save File')
@@ -273,6 +317,9 @@ def slct_GUI(obj, gui):
         obj.sqw = SQW_window()
         obj.sqw.show()
         obj.hide()
+    elif(gui == 'calibrate'):
+        obj.calibrate = Calibrate_window()
+        obj.calibrate.show()
 
 
 if __name__ == '__main__':

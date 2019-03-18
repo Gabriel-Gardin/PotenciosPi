@@ -167,6 +167,7 @@ class LinearVoltametry:
                     yield((1000 * potencial), (1000 * sinal))
 
             LinearVoltametry.started = False
+            GPIO.cleanup()
             tempo_final = time.time()
             print(tempo_final - tempo_inicial)
         

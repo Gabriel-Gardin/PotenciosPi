@@ -284,11 +284,11 @@ class Calibrate_window(base_calibrate, form_calibrate):
         GPIO.cleanup()
 
     def calibrar(self):
-        data = {'refpot':(int(self.text_ref.text())/1000)}
+        data = {'refpot':(int(self.text_ref.text()))}
         print('aaaaaa')
         print(type(data))
         with open('/home/pi/Desktop/PotenciosPi/configs.json', 'w') as json_file:
-            json.dumps(data, json_file)
+            json.dump(data, json_file)
 
         
 

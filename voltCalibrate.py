@@ -26,7 +26,7 @@ class CalibratePotential:
         self._refpot = var
     
     def apply_pot(self):
-        potencial = (self._refpot/1000 - self._applypotential)
+        potencial = (self._refpot - self._applypotential/1000)
         ad_da = AdcDac()
         ad_da.init_ADCDAC()
         ad_da.applyPot(potencial)

@@ -83,11 +83,11 @@
 <wire x1="61.779903125" y1="99.796490625" x2="1.679034375" y2="99.505175" width="0" layer="20"/>
 <wire x1="1.679034375" y1="99.505175" x2="-0.80883125" y2="97.014190625" width="0" layer="20" curve="89.511147"/>
 <dimension x1="-0.9" y1="97.692896875" x2="64.1" y2="97.8" x3="31.593246875" y3="101.846109375" textsize="1.778" layer="20" dtype="diameter"/>
-<hole x="1.4" y="97.3" drill="2.75"/>
+<hole x="1.4" y="97.3" drill="2.75" locked="yes"/>
 <dimension x1="64.29195" y1="97.277865625" x2="62.1" y2="97.3" x3="63.26358125" y3="103.9842125" textsize="1.778" layer="16" dtype="diameter"/>
-<hole x="62" y="97.5" drill="2.75"/>
-<hole x="1.3" y="45.5" drill="2.75"/>
-<hole x="61.4" y="45.6" drill="2.75"/>
+<hole x="62" y="97.5" drill="2.75" locked="yes"/>
+<hole x="1.3" y="45.5" drill="2.75" locked="yes"/>
+<hole x="61.4" y="45.6" drill="2.75" locked="yes"/>
 </plain>
 <libraries>
 <library name="rcl" urn="urn:adsk.eagle:library:334">
@@ -2294,8 +2294,8 @@ design rules under a new name.</description>
 <wire x1="56.81" y1="59.62" x2="56.81" y2="54.88" width="0.381" layer="16"/>
 <polygon width="0.381" layer="16">
 <vertex x="0.807103125" y="99.4"/>
-<vertex x="49.85130625" y="99.4" curve="-90"/>
-<vertex x="64" y="85.25130625"/>
+<vertex x="63.25130625" y="99.4" curve="-90"/>
+<vertex x="64" y="98.65130625"/>
 <vertex x="64" y="44.87979375" curve="-90"/>
 <vertex x="62.52020625" y="43.4"/>
 <vertex x="1.6" y="43.4" curve="-90"/>
@@ -2680,6 +2680,10 @@ will not be understood (or retained) with this version.
 Since Version 8.3, EAGLE supports the association of 3D packages
 with devices in libraries, schematics, and board files. Those 3D
 packages will not be understood (or retained) with this version.
+</note>
+<note version="8.5" severity="warning">
+Since Version 8.5, EAGLE supports locking for holes, vias, wires and polygons. 
+The locking property on all objects of these types will not be understood in this version. 
 </note>
 </compatibility>
 </eagle>

@@ -14,6 +14,7 @@ class LinearVoltametry:
         self.stepVolt = stepVolt
         self.scanRate = scanRate
         self.ganho = ganho
+        self._adcdac = AdcDac()
         
     @property
     def dac_sum(self):
@@ -114,8 +115,6 @@ class LinearVoltametry:
 
             _tempo = 0
         
-            ad_da = AdcDac()
-            ad_da.init_ADCDAC()
             if self._potIni < self._potFin:
                 tempo_inicial = time.time()
                 potencialAp = self._potIni
@@ -129,7 +128,7 @@ class LinearVoltametry:
                     somacorrente = 0
                     for ii in range(self._acq_points):
                         if ii > self._delay_points:
-                            somacorrente = ad_da.readADC() + somacorrente
+                            somacorrente = self._adcdac.readADC() + somacorrente
                     somacorrente = somacorrente / (self._acq_points - self._delay_points)
                     sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
                     #print(("E=", round((1000*potencial), 2), "mv", "AND i=", round((1000 * sinal), 5), "mA"))
@@ -155,7 +154,7 @@ class LinearVoltametry:
                     somacorrente = 0
                     for ii in range(self._acq_points):
                         if ii > self._delay_points:
-                            somacorrente = ad_da.readADC() + somacorrente
+                            somacorrente = self._adcdac.readADC() + somacorrente
                     somacorrente = somacorrente / (self._acq_points - self._delay_points)
                     sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
                     #print(("E=", round((1000*potencial), 2), "mv", "AND i=", round((1000 * sinal), 5), "mA"))

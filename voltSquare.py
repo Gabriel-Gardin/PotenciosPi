@@ -15,6 +15,7 @@ class SquareWaveVoltametry:
         self.ganho = ganho
         self.ampP = ampP
         self.freq = freq
+        self._adcdac = AdcDac()
     
         
     @property
@@ -115,8 +116,6 @@ class SquareWaveVoltametry:
         elif(self._ganho == 5):
             self._resistor = 470000
     
-        ad_da = AdcDac()
-        ad_da.init_ADCDAC()
         potencialAp = self._potIni
         ampCorr = self._ampP/1000
         cont = 0
@@ -126,12 +125,12 @@ class SquareWaveVoltametry:
                 potencial = (potencialAp/1000)
                 pulso1 = potencial + ampCorr
                 potR = (self._dac_sum - pulso1)
-                ad_da.applyPot(potR)
+                self._adcdac.applyPot(potR)
 
                 ii = 0
                 somacorrente = 0
                 for ii in range(self._acq_points):
-                    leitura = ad_da.readADC()
+                    leitura = self._adcdac.readADC()
                     if ii > self._delay_points:
                         somacorrente += leitura
                 somacorrente = somacorrente /(self._acq_points - self._delay_points)
@@ -139,12 +138,12 @@ class SquareWaveVoltametry:
                 potencial = potencialAp/1000
                 pulso2 = potencial - ampCorr
                 potR = self._dac_sum - pulso2
-                ad_da.applyPot(potR)
+                self._adcdac.applyPot(potR)
 
 
                 somacorrente = 0
                 for ii in range(self._acq_points):
-                    leitura = ad_da.readADC()
+                    leitura = self._adcdac.readADC()
                     if ii > self._delay_points:
                         somacorrente += leitura
                 somacorrente = somacorrente / (self._acq_points - self._delay_points)

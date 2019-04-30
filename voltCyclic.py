@@ -14,6 +14,7 @@ class CyclicVoltametry:
         self.stepVolt = stepVolt
         self.scanRate = scanRate
         self.ganho = ganho
+        self._adcdac = AdcDac()
 
        
     @property
@@ -101,33 +102,32 @@ class CyclicVoltametry:
             self._resistor = 470
         
         elif(self._ganho == 3):
-            self._resistor = 4700
+            self._resistor = 2700
         
         elif(self._ganho == 4):
-            self._resistor = 47000
+            self._resistor = 17700
         
         elif(self._ganho == 5):
             self._resistor = 470000
 
         _tempo = 0
     
-        ad_da = AdcDac()
-        ad_da.init_ADCDAC()
         potencialAp = self._potIni
         if self._potIni < self._potFin:
             tempo_inicial = time.time()
             while (potencialAp <= self._potFin and CyclicVoltametry.started == True):
                 potencial = (potencialAp/1000)
-                potR = self._dac_sum - potencial
+                potR = self._dac_sum + potencial
                 _nowTime = time.time()
-                ad_da.applyPot(potR)
+                self._adcdac.applyPot(potR)
                 potencialAp = potencialAp + self._stepVolt
                 somacorrente = 0
                 for ii in range(self._acq_points):
+                    leitura = self._adcdac.readADC()
                     if ii > self._delay_points:
-                        somacorrente = ad_da.readADC() + somacorrente
+                        somacorrente = leitura + somacorrente
                 somacorrente = somacorrente / (self._acq_points - self._delay_points)
-                sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
+                sinal = (somacorrente - self.dac_sum) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
                 _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime) #Compara o tempo que a função ficou "inativa"(_nowTIme - _tempo) e soma ao tempo que a função perdeu aplicando o potencial(time.time() - _nowTime)
                 if(_elapsed_time < _time):
                     time.sleep(_time - _elapsed_time)
@@ -138,16 +138,17 @@ class CyclicVoltametry:
             potencialAp = potencialAp - (2*self._stepVolt)
             while (potencialAp >= self._potIni and CyclicVoltametry.started == True):
                 potencial = (potencialAp/1000)
-                potR = self._dac_sum - potencial
+                potR = self._dac_sum + potencial
                 _nowTime = time.time()
-                ad_da.applyPot(potR)
+                self._adcdac.applyPot(potR)
                 potencialAp = potencialAp - self._stepVolt
                 somacorrente = 0
                 for ii in range(self._acq_points):
+                    leitura = self._adcdac.readADC()
                     if ii > self._delay_points:
-                        somacorrente = ad_da.readADC() + somacorrente                        
+                        somacorrente = leitura + somacorrente                     
                 somacorrente = somacorrente / (self._acq_points - self._delay_points)
-                sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
+                sinal = (somacorrente - self._dac_sum) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
                 _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime) #Compara o tempo que a função ficou "inativa"(_nowTIme - _tempo) e soma ao tempo que a função perdeu aplicando o potencial(time.time() - _nowTime)
                 if(_elapsed_time < _time):
                     time.sleep(_time - _elapsed_time)
@@ -160,12 +161,12 @@ class CyclicVoltametry:
                 potencial = (potencialAp/1000)
                 potR = self._dac_sum - potencial
                 _nowTime = time.time()
-                ad_da.applyPot(potR)
+                self._adcdac.applyPot(potR)
                 potencialAp = potencialAp - self._stepVolt
                 somacorrente = 0
                 for ii in range(self._acq_points):  
                     if ii > self._delay_points:
-                        somacorrente = ad_da.readADC() + somacorrente
+                        somacorrente = self._adcdac.readADC() + somacorrente
                 somacorrente = somacorrente / (self._acq_points - self._delay_points)
                 sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
                 _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime) #Compara o tempo que a função ficou "inativa"(_nowTIme - _tempo) e soma ao tempo que a função perdeu aplicando o potencial(time.time() - _nowTime)
@@ -179,12 +180,12 @@ class CyclicVoltametry:
                 potencial = (potencialAp/1000)
                 potR = self._dac_sum - potencial
                 _nowTime = time.time()
-                ad_da.applyPot(potR)
+                self._adcdac.applyPot(potR)
                 potencialAp = potencialAp + self._stepVolt
                 somacorrente = 0
                 for ii in range(self._acq_points):
                     if ii > self._delay_points:
-                        somacorrente = ad_da.readADC() + somacorrente
+                        somacorrente = self._adcdac.readADC() + somacorrente
                 somacorrente = somacorrente / (self._acq_points - self._delay_points)
                 sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
                 _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime)

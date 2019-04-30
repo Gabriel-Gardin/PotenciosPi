@@ -1,4 +1,3 @@
-
 from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import QApplication, QMessageBox, QFileDialog
 from functools import partial
@@ -94,8 +93,10 @@ class Linear_window(form_linear, base_linear):
         acq_pointss = int(self.lineAcqPoint.text())
         delay_pointss = int(self.lineDelayPoint.text())
         ganhoo = int(self.spinBox.text())
+        with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+            dac_summ = float((json.loads(config_file.read())).get('divider_volt'))
 
-        i1 = LinearVoltametry(dac_sum=3.0, acq_points=acq_pointss, delay_points=delay_pointss,
+        i1 = LinearVoltametry(dac_sum=dac_summ, acq_points=acq_pointss, delay_points=delay_pointss,
                             potIni=potInii, potFin=potFinn, stepVolt=potStepp, ganho=ganhoo, scanRate=potScann)
 
         self.Xdata = []
@@ -163,10 +164,11 @@ class Cyclic_window(form_cyclic, base_cyclic):
         potScanss = int(self.lineVoltScans.text())
         acq_pointss = int(self.lineAcqPoint.text())
         delay_pointss = int(self.lineDelayPoint.text())
-        ganhoo = int(self.spinBox.text()) 
+        ganhoo = int(self.spinBox.text())
+        with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+            dac_summ = float((json.loads(config_file.read())).get('divider_volt'))
 
-
-        i1 = CyclicVoltametry(dac_sum=3.0,acq_points=acq_pointss,delay_points=delay_pointss,
+        i1 = CyclicVoltametry(dac_sum=dac_summ,acq_points=acq_pointss,delay_points=delay_pointss,
                          potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,scanRate=potScann)
 
         self.Ydata = []
@@ -175,10 +177,10 @@ class Cyclic_window(form_cyclic, base_cyclic):
             self.Xdata.append(x[0])
             self.Ydata.append(x[1])
             # print(data[0],data[1])
-            self.textBrowser.append(str([x[0], x[1]]))
+       #     self.textBrowser.append(str([x[0], x[1]]))
             self.graphicsView.plot(self.Xdata, self.Ydata, clear=True)
             QtGui.QApplication.processEvents()
-            print([x[0], x[1]])
+        #    print([x[0], x[1]])
 
     def closeEvent(self, event):
         msg = QMessageBox()
@@ -233,9 +235,11 @@ class SQW_window(form_SQW,base_SQW):
         potScanss = int(self.lineVoltScans.text())
         acq_pointss = int(self.lineAcqPoint.text())
         delay_pointss = int(self.lineDelayPoint.text())
-        ganhoo = int(self.spinBox.text()) 
+        ganhoo = int(self.spinBox.text())
+        with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+            dac_summ = float((json.loads(config_file.read())).get('divider_volt'))
         
-        i1 = SquareWaveVoltametry(dac_sum=3.0,acq_points=acq_pointss,delay_points=delay_pointss,
+        i1 = SquareWaveVoltametry(dac_sum=dac_summ,acq_points=acq_pointss,delay_points=delay_pointss,
                          potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,ampP=50,freq=10)
 
         self.Ydata = []
@@ -271,7 +275,7 @@ class Calibrate_window(base_calibrate, form_calibrate):
 
     def run_calibrate(self):
         appott = int(self.text_pot.text())
-        refpott = int(self.text_ref.text())
+        refpott = float(self.text_ref.text())
         calibrar =  calibrator(applypotential = appott, refpot = refpott)
         self.bt_apply_pot.disconnect()
         self.bt_apply_pot.setText('Stop')
@@ -284,14 +288,9 @@ class Calibrate_window(base_calibrate, form_calibrate):
         GPIO.cleanup()
 
     def calibrar(self):
-        data = {'refpot':(int(self.text_ref.text()))}
-        print('aaaaaa')
-        print(type(data))
+        data = {'divider_volt':(float(self.text_ref.text()))}
         with open('/home/pi/Desktop/PotenciosPi/configs.json', 'w') as json_file:
             json.dump(data, json_file)
-
-        
-
 
 def save(obj):
     name = QFileDialog.getSaveFileName(obj, 'Save File')

@@ -1,11 +1,11 @@
 import sys
-sys.path.append('/home/pi/ABElectronics_Python3_Libraries/ADCDACPi')
+sys.path.append('/home/pi/Desktop/ABElectronics_Python_Libraries')
 import RPi.GPIO as GPIO
 import time
-from ABE_ADCDACPi import ADCDACPi
+from ADCDACPi import ADCDACPi
 
 class AdcDac:    
-    def init_ADCDAC(self):
+    def __init__(self):
         """Inicializa o conversor AD/DA"""
         # Gain of the board and reference tension.
         self.adcdac = ADCDACPi(2)
@@ -21,7 +21,7 @@ class AdcDac:
         self._readPot = self.adcdac.read_adc_voltage(1, 0)
         return (self._readPot)
 
-    def applyPot(self, arg):
+    def applyPot(self, value):
         """This function is used to apply the potential using the desired DAC. Change this to match the DAC that is being used"""
-        self.adcdac.set_dac_voltage(1, arg)
-        time.sleep(0.1)
+        self.adcdac.set_dac_voltage(1, value)
+

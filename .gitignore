@@ -1,4 +1,4 @@
 #Dont track these files
 
-.csv
-.pyc
+*.csv
+*.pyc

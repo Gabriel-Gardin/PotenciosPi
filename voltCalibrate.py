@@ -32,16 +32,16 @@ class CalibratePotential():
     def calibrar(self):
         """Calibra o potencial de referência lendo 100 pontos sem aplicar nenhuma tensão e salva no arquivo de configurações"""
         voltage = 0
-        for i in range(100):
+        for i in range(500):
             voltage  += self._adcdac.readADC()
 
-        ref_pot = round((voltage/100), 4)
+        ref_pot = round((voltage/500), 4)
         print(ref_pot)
         data = {'divider_volt':(ref_pot)}
         self.data_file.update(data)
         with open('/home/pi/Desktop/PotenciosPi/configs.json', 'w') as filee:
             json.dump(self.data_file, filee)
-
+        GPIO.cleanup()
         return(ref_pot)
         
 

@@ -5,7 +5,7 @@ import time
 
 class SquareWaveVoltametry:
     started = False
-    def __init__(self, dac_sum,acq_points,delay_points,potIni=0,potFin=600,stepVolt=25,ganho=1,ampP=50,freq=10, acq_time=7.0e-5):
+    def __init__(self, dac_sum,acq_points,delay_points,potIni=0,potFin=600,stepVolt=25,ganho=1,ampP=50,freq=10, acq_time=7.0e-5, postPot=0, postTime=0):
         self.dac_sum = dac_sum
         self.acq_points = acq_points
         self.delay_points = delay_points
@@ -16,6 +16,8 @@ class SquareWaveVoltametry:
         self.ampP = ampP
         self.freq = freq
         self.acq_time = acq_time
+        self.postPot = postPot
+        self.postTime = postTime
         self._adcdac = AdcDac()
     
         
@@ -110,18 +112,36 @@ class SquareWaveVoltametry:
             raise ValueError("A variável acq_time(Acquisition time) deve ser do tipo float {}".format(var))
         self._acq_time = var
 
+    @property
+    def postPot(self):
+        return self._postPot
+    @postPot.setter
+    def postPot(self, var):
+        if(not(isinstance(var, int))):
+            raise ValueError("A variavel postPot deve ser do tipo int {}".format(var))
+        self._postPot = var
+
+    @property
+    def postTime(self):
+        return self._postTime
+    @postTime.setter
+    def postTime(self, var):
+        if(not(isinstance(var, int))):
+            raise ValueError("A variavel postTIme deve ser do tipo int")
+        self._postTime = var
+
     def run(self):
         if (self._ganho == 1):
-            self._resistor = 14500 
+            self._resistor = 1000 
         
         elif(self._ganho == 2):
-            self._resistor = 470
-        
-        elif(self._ganho == 3):
             self._resistor = 4700
         
-        elif(self._ganho == 4):
+        elif(self._ganho == 3):
             self._resistor = 47000
+        
+        elif(self._ganho == 4):
+            self._resistor = 100000
         
         elif(self._ganho == 5):
             self._resistor = 470000
@@ -166,8 +186,10 @@ class SquareWaveVoltametry:
                 correnteSQW = corrente - corrente2
                 potencialAp = potencialAp + self.stepVolt
                 yield (1000*potencial),(1000*correnteSQW)
-            _t = time.time()
-            print("delta_t= ", _t - _t0)
+        _t = time.time()
+        self._adcdac.applyPot((self._postPot/1000)+self._dac_sum)
+        time.sleep(self._postTime)
+        print("delta_t= ", _t - _t0)
                 
         GPIO.cleanup()
         SquareWaveVoltametry.started = False

@@ -203,6 +203,8 @@ class SQW_window(form_SQW,base_SQW):
         self.actionSave.triggered.connect(partial(save, obj=self))
         self.CalibrateFreq.triggered.connect(calibrate_freq)
         self.pushButton_2.clicked.connect(self.run_SQW)
+        self.TPostPot.setText("0")
+        self.postPot.setText("0")
        # self.actionExit.triggered.connect(self.close)
        # self.lineAcqPoint.setText("300")
     #    self.lineDelayPoint.setText("100")
@@ -228,6 +230,8 @@ class SQW_window(form_SQW,base_SQW):
     #    potScanss = int(self.lineVoltScans.text())
     #    acq_pointss = int(self.lineAcqPoint.text())
     #    delay_pointss = int(self.lineDelayPoint.text())
+        post_pot = int(self.postPot.text())
+        post_time = int(self.TPostPot.text())
         ganhoo = int(self.spinBox.text())
         sqw_amplitude = int(self.SqwAmplitude.text())
         sqw_frequency = int(self.SqwFrequency.text())
@@ -237,7 +241,8 @@ class SQW_window(form_SQW,base_SQW):
             data_read_time = float(config_data.get("read_voltage_time"))
         
         i1 = SquareWaveVoltametry(dac_sum=dac_summ,acq_points=300,delay_points=100,
-                         potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,ampP=sqw_amplitude,freq=sqw_frequency, acq_time=data_read_time)
+                         potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,ampP=sqw_amplitude,
+                         freq=sqw_frequency, acq_time=data_read_time,postPot = post_pot, postTime=post_time)
 
         if(self.checkBox.isChecked()):
             preCond = int(self.ECond.text())

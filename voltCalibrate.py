@@ -1,21 +1,19 @@
 #coding: utf-8
 from adcdac_module import AdcDac
 import RPi.GPIO as GPIO
+import json
 
-class CalibratePotential(AdcDac):
-    def __init__(self, applypotential=0, refpot=3):
+class CalibratePotential():
+    """Calibra o potencial de referência lendo a tensão do eletrodo de trabalho, e também aplica o potencial desejado"""
+    def __init__(self, refpot=1.65):
         self.refpot = refpot
-        self.applypotential = applypotential
         self._adcdac = AdcDac()
-
-    @property
-    def applypotential(self):
-        return self._applypotential
-    @applypotential.setter
-    def applypotential(self, var):
-        if (not(isinstance(var, int))):
-            raise(ValueError("A variável applypot{} deve ser do tipo int".format(var)))
-        self._applypotential = var
+        with open('/home/pi/Desktop/PotenciosPi/configs.json') as json_file:
+            try:
+                self.data_file = json.load(json_file)
+            except Exception as e:
+                print(e)
+            
 
     @property
     def refpot(self):
@@ -26,11 +24,25 @@ class CalibratePotential(AdcDac):
             raise(ValueError("A variável refpot{} deve ser do tipo float".format(var)))
         self._refpot = var
     
-    def apply_pot(self):
-        potencial = (self._refpot + self._applypotential/1000)          
+    def apply_pot(self, potential):
+        """Aplica o potencial desejado"""
+        potencial = (self._refpot + potential/1000)          
         self._adcdac.applyPot(potencial)
 
     def calibrar(self):
-        pass
+        """Calibra o potencial de referência lendo 100 pontos sem aplicar nenhuma tensão e salva no arquivo de configurações"""
+        voltage = 0
+        for i in range(100):
+            voltage  += self._adcdac.readADC()
+
+        ref_pot = round((voltage/100), 4)
+        print(ref_pot)
+        data = {'divider_volt':(ref_pot)}
+        self.data_file.update(data)
+        with open('/home/pi/Desktop/PotenciosPi/configs.json', 'w') as filee:
+            json.dump(self.data_file, filee)
+
+        return(ref_pot)
+        
 
 

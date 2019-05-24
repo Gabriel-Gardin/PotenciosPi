@@ -5,7 +5,7 @@ import time
 
 class SquareWaveVoltametry:
     started = False
-    def __init__(self, dac_sum,acq_points,delay_points,potIni=0,potFin=600,stepVolt=25,ganho=1,ampP=50,freq=10):
+    def __init__(self, dac_sum,acq_points,delay_points,potIni=0,potFin=600,stepVolt=25,ganho=1,ampP=50,freq=10, acq_time=7.0e-5):
         self.dac_sum = dac_sum
         self.acq_points = acq_points
         self.delay_points = delay_points
@@ -15,6 +15,7 @@ class SquareWaveVoltametry:
         self.ganho = ganho
         self.ampP = ampP
         self.freq = freq
+        self.acq_time = acq_time
         self._adcdac = AdcDac()
     
         
@@ -100,9 +101,18 @@ class SquareWaveVoltametry:
             raise ValueError("A variável freq(Frequência de varredura) deve ser do tipo int {}".format(var))
         self._freq = var
 
+    @property
+    def acq_time(self):
+        return self._dac_sum
+    @acq_time.setter
+    def acq_time(self, var):
+        if(not(isinstance(var,float))):
+            raise ValueError("A variável acq_time(Acquisition time) deve ser do tipo float {}".format(var))
+        self._acq_time = var
+
     def run(self):
         if (self._ganho == 1):
-            self._resistor = 47 
+            self._resistor = 14500 
         
         elif(self._ganho == 2):
             self._resistor = 470
@@ -119,38 +129,45 @@ class SquareWaveVoltametry:
         potencialAp = self._potIni
         ampCorr = self._ampP/1000
         cont = 0
+        frequency_time = 1/self._freq
+        _delay_points = ((frequency_time/self._acq_time) - self._acq_points) / 2
         if self.potIni<self._potFin:
-            while (potencialAp <= self._potFin and LinearVoltametry.started == True):
+            _t0 = time.time()
+            while (potencialAp <= self._potFin and SquareWaveVoltametry.started == True):
                 cont += 1
                 potencial = (potencialAp/1000)
-                pulso1 = potencial + ampCorr
-                potR = (self._dac_sum - pulso1)
+                pulso1 = potencial + ampCorr + self.stepVolt/1000
+                potR = (self._dac_sum + pulso1)
                 self._adcdac.applyPot(potR)
-
-                ii = 0
                 somacorrente = 0
                 for ii in range(self._acq_points):
                     leitura = self._adcdac.readADC()
                     if ii > self._delay_points:
                         somacorrente += leitura
+                for i in range(int(_delay_points)):
+                    self._adcdac.readADC()
+                
                 somacorrente = somacorrente /(self._acq_points - self._delay_points)
-                corrente = -somacorrente/self._resistor
-                potencial = potencialAp/1000
-                pulso2 = potencial - ampCorr
-                potR = self._dac_sum - pulso2
+                corrente = somacorrente/self._resistor
+              #  potencial = potencialAp/1000
+                pulso2 = pulso1 - ampCorr
+                potR = self._dac_sum +  pulso2
                 self._adcdac.applyPot(potR)
-
-
                 somacorrente = 0
                 for ii in range(self._acq_points):
                     leitura = self._adcdac.readADC()
                     if ii > self._delay_points:
                         somacorrente += leitura
+                for i in range(int(_delay_points)):
+                    self._adcdac.readADC()
+
                 somacorrente = somacorrente / (self._acq_points - self._delay_points)
                 corrente2 = -somacorrente/self._resistor
                 correnteSQW = corrente - corrente2
                 potencialAp = potencialAp + self.stepVolt
                 yield (1000*potencial),(1000*correnteSQW)
+            _t = time.time()
+            print("delta_t= ", _t - _t0)
                 
         GPIO.cleanup()
         SquareWaveVoltametry.started = False

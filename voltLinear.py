@@ -123,7 +123,7 @@ class LinearVoltametry:
                     potencial = (potencialAp/1000)
                     potR = self._dac_sum - potencial
                     _nowTime = time.time()
-                    ad_da.applyPot(potR)
+                    self._adcdac.applyPot(potR)
                     potencialAp = potencialAp + self._stepVolt
                     somacorrente = 0
                     for ii in range(self._acq_points):
@@ -149,7 +149,7 @@ class LinearVoltametry:
                     potencial = (potencialAp/1000)
                     potR = self._dac_sum - potencial
                     _nowTime = time.time()
-                    ad_da.applyPot(potR)
+                    self._adcdac.applyPot(potR)
                     potencialAp = potencialAp - self._stepVolt
                     somacorrente = 0
                     for ii in range(self._acq_points):

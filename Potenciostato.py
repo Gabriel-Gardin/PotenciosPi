@@ -7,6 +7,7 @@ from voltLinear import LinearVoltametry
 from voltCyclic import CyclicVoltametry
 from voltSquare import SquareWaveVoltametry
 from voltCalibrate import CalibratePotential as calibrator
+from calibrate_freq import CalibrateFreq as freq_calibrator
 import pyqtgraph as pg
 from PreDeposition import PreDeposition
 import RPi.GPIO as GPIO
@@ -51,18 +52,20 @@ class Linear_window(form_linear, base_linear):
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
-        self.actionCalibrate.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
+        self.applypot.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
+        self.actionCalibrate.triggered.connect(partial(calibrate_pot, obj=self))
         self.actionSave.triggered.connect(partial(save, obj=self))
         self.pushButton_2.clicked.connect(self.run_linear)
         self.pushButton.clicked.connect(self.stop)
         self.actionExit.triggered.connect(self.close)
-        self.lineAcqPoint.setText("300")
-        self.lineDelayPoint.setText("100")
+        #self.lineAcqPoint.setText("300")
+        #self.lineDelayPoint.setText("100")
         self.lineVoltScans.setText("1")
         self.lineVoltScan.setText("50")
         self.lineVoltStep.setText("10")
         self.lineVoltFinal.setText("600")
         self.lineVoltInitia.setText("0")
+        self.spinBox.setValue(1)
 
     def stop(self):
         LinearVoltametry.started = False
@@ -71,33 +74,29 @@ class Linear_window(form_linear, base_linear):
 
     def run_linear(self):
         LinearVoltametry.started = True
-        #self.pushButton_2.disconnect()
-        #self.pushButton_2.clicked.connect(partial(stop_voltamogram, obj=self))
-        if (self.checkBox.isChecked()):
-            preCond = int(self.linePreCond.text())
-            pre_time_cond = int(self.linePretime.text())
-            pot_pre_dep = int(self.linePreDep.text())
-            pre_deposition_time = int(self.linePreDepTime.text())
-
-            i2 = PreDeposition(pot_cond=preCond, time_cond=pre_time_cond, pre_dep_pot=pot_pre_dep,
-                            pre_dep_time=pre_deposition_time, somadorDA=3.0)
-            i2.run()
-
-        print("aqui caraio")
-        print(self.lineVoltInitia.text())
         potInii = int(self.lineVoltInitia.text())
         potFinn = int(self.lineVoltFinal.text())
         potStepp = int(self.lineVoltStep.text())
         potScann = int(self.lineVoltScan.text())
         potScanss = int(self.lineVoltScans.text())
-        acq_pointss = int(self.lineAcqPoint.text())
-        delay_pointss = int(self.lineDelayPoint.text())
+        #acq_pointss = int(self.lineAcqPoint.text())
+        #delay_pointss = int(self.lineDelayPoint.text())
         ganhoo = int(self.spinBox.text())
         with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
             dac_summ = float((json.loads(config_file.read())).get('divider_volt'))
 
-        i1 = LinearVoltametry(dac_sum=dac_summ, acq_points=acq_pointss, delay_points=delay_pointss,
+        i1 = LinearVoltametry(dac_sum=dac_summ, acq_points=300, delay_points=100,
                             potIni=potInii, potFin=potFinn, stepVolt=potStepp, ganho=ganhoo, scanRate=potScann)
+
+        if (self.checkBox.isChecked()):
+            preCond = int(self.ECond.text())
+            pre_time_cond = int(self.tCond.text())
+            pot_pre_dep = int(self.PreDep.text())
+            pre_deposition_time = int(self.TDep.text())
+
+            i2 = PreDeposition(pot_cond=preCond, time_cond=pre_time_cond, pre_dep_pot=pot_pre_dep,
+                            pre_dep_time=pre_deposition_time, somadorDA=3.0)
+            i2.run()
 
         self.Xdata = []
         self.Ydata = []
@@ -128,18 +127,20 @@ class Cyclic_window(form_cyclic, base_cyclic):
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
-        self.actionCalibrate.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
+        self.applypot.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
+        self.actionCalibrate.triggered.connect(partial(calibrate_pot, obj=self))
         self.actionSave.triggered.connect(partial(save, obj=self))
         self.pushButton.clicked.connect(self.stop)
         self.pushButton_2.clicked.connect(self.run_cyclic)
         self.actionExit.triggered.connect(self.close)
-        self.lineAcqPoint.setText("300")
-        self.lineDelayPoint.setText("100")
+       # self.lineAcqPoint.setText("300")
+       # self.lineDelayPoint.setText("100")
         self.lineVoltScans.setText("1")
         self.lineVoltScan.setText("50")
         self.lineVoltStep.setText("10")
         self.lineVoltFinal.setText("600")
         self.lineVoltInitia.setText("0")
+        self.spinBox.setValue(1)
 
     def stop(self):
         CyclicVoltametry.started = False
@@ -147,40 +148,36 @@ class Cyclic_window(form_cyclic, base_cyclic):
 
     def run_cyclic(self):
         CyclicVoltametry.started = True
-        if(self.checkBox.isChecked()):
-            preCond = int(self.linePreCond.text())
-            pre_time_cond = int(self.linePretime.text())
-            pot_pre_dep = int(self.linePreDep.text())
-            pre_deposition_time = int(self.linePreDepTime.text())
-
-            i2 = PreDeposition(pot_cond = preCond, time_cond = pre_time_cond, pre_dep_pot=pot_pre_dep, pre_dep_time = pre_deposition_time, somadorDA = 3.0)
-            i2.run()
-
         print(self.lineVoltInitia.text())
         potInii = int(self.lineVoltInitia.text())
         potFinn = int(self.lineVoltFinal.text())
         potStepp = int(self.lineVoltStep.text())
         potScann = int(self.lineVoltScan.text())
         potScanss = int(self.lineVoltScans.text())
-        acq_pointss = int(self.lineAcqPoint.text())
-        delay_pointss = int(self.lineDelayPoint.text())
+       # acq_pointss = int(self.lineAcqPoint.text())
+       # delay_pointss = int(self.lineDelayPoint.text())
         ganhoo = int(self.spinBox.text())
         with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
             dac_summ = float((json.loads(config_file.read())).get('divider_volt'))
 
-        i1 = CyclicVoltametry(dac_sum=dac_summ,acq_points=acq_pointss,delay_points=delay_pointss,
-                         potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,scanRate=potScann)
+        i1 = CyclicVoltametry(dac_sum=dac_summ,acq_points=300,delay_points=100,
+                        potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,scanRate=potScann)
+
+        if(self.checkBox.isChecked()):
+            preCond = int(self.ECond.text())
+            pre_time_cond = int(self.tCond.text())
+            pot_pre_dep = int(self.PreDep.text())
+            pre_deposition_time = int(self.TDep.text())
+            i2 = PreDeposition(pot_cond = preCond, time_cond = pre_time_cond, pre_dep_pot=pot_pre_dep, pre_dep_time = pre_deposition_time, somadorDA = 3.0)
+            i2.run()
 
         self.Ydata = []
         self.Xdata = []
         for x in i1.run():
             self.Xdata.append(x[0])
             self.Ydata.append(x[1])
-            # print(data[0],data[1])
-       #     self.textBrowser.append(str([x[0], x[1]]))
             self.graphicsView.plot(self.Xdata, self.Ydata, clear=True)
             QtGui.QApplication.processEvents()
-        #    print([x[0], x[1]])
 
     def closeEvent(self, event):
         msg = QMessageBox()
@@ -200,58 +197,66 @@ class SQW_window(form_SQW,base_SQW):
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
-        self.actionCalibrate.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
+        self.applypot.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
+        self.actionCalibrate.triggered.connect(partial(calibrate_pot, obj=self))
         self.pushButton.clicked.connect(self.stop)
         self.actionSave.triggered.connect(partial(save, obj=self))
+        self.CalibrateFreq.triggered.connect(calibrate_freq)
         self.pushButton_2.clicked.connect(self.run_SQW)
-        self.actionExit.triggered.connect(self.close)
-        self.lineAcqPoint.setText("300")
-        self.lineDelayPoint.setText("100")
-        self.lineVoltScans.setText("1")
-        self.lineVoltScan.setText("50")
+       # self.actionExit.triggered.connect(self.close)
+       # self.lineAcqPoint.setText("300")
+    #    self.lineDelayPoint.setText("100")
+    #    self.lineVoltScans.setText("1")
+    #    self.lineVoltScan.setText("50")
         self.lineVoltStep.setText("10")
         self.lineVoltFinal.setText("600")
         self.lineVoltInitia.setText("0")
+        self.SqwAmplitude.setText("50")
+        self.SqwFrequency.setValue(20)
+        self.spinBox.setValue(1)
 
     def stop(self):
-        SquareWaveVoltametry.started = False
+        SquareWaveVoltametry.started = False    
         print("Parou")
 
     def run_SQW(self):
         SquareWaveVoltametry.started = True
-        if(self.checkBox.isChecked()):
-            preCond = int(self.linePreCond.text())
-            pre_time_cond = int(self.linePretime.text())
-            pot_pre_dep = int(self.linePreDep.text())
-            pre_deposition_time = int(self.linePreDepTime.text())
-
-            i2 = PreDeposition(pot_cond = preCond, time_cond = pre_time_cond, pre_dep_pot=pot_pre_dep, pre_dep_time = pre_deposition_time, somadorDA = 3.0)
-            i2.run()
-        print(self.lineVoltInitia.text())
         potInii = int(self.lineVoltInitia.text())
         potFinn = int(self.lineVoltFinal.text())
         potStepp = int(self.lineVoltStep.text())
-        potScann = int(self.lineVoltScan.text())
-        potScanss = int(self.lineVoltScans.text())
-        acq_pointss = int(self.lineAcqPoint.text())
-        delay_pointss = int(self.lineDelayPoint.text())
+    #    potScann = int(self.lineVoltScan.text())
+    #    potScanss = int(self.lineVoltScans.text())
+    #    acq_pointss = int(self.lineAcqPoint.text())
+    #    delay_pointss = int(self.lineDelayPoint.text())
         ganhoo = int(self.spinBox.text())
+        sqw_amplitude = int(self.SqwAmplitude.text())
+        sqw_frequency = int(self.SqwFrequency.text())
         with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
-            dac_summ = float((json.loads(config_file.read())).get('divider_volt'))
+            config_data = json.loads(config_file.read())
+            dac_summ = float(config_data.get('divider_volt'))
+            data_read_time = float(config_data.get("read_voltage_time"))
         
-        i1 = SquareWaveVoltametry(dac_sum=dac_summ,acq_points=acq_pointss,delay_points=delay_pointss,
-                         potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,ampP=50,freq=10)
+        i1 = SquareWaveVoltametry(dac_sum=dac_summ,acq_points=300,delay_points=100,
+                         potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,ampP=sqw_amplitude,freq=sqw_frequency, acq_time=data_read_time)
+
+        if(self.checkBox.isChecked()):
+            preCond = int(self.ECond.text())
+            pre_time_cond = int(self.tCond.text())
+            pot_pre_dep = int(self.PreDep.text())
+            pre_deposition_time = int(self.TDep.text())
+
+            i2 = PreDeposition(pot_cond = preCond, time_cond = pre_time_cond, pre_dep_pot=pot_pre_dep, pre_dep_time = pre_deposition_time, somadorDA = 3.0)
+            i2.run()
 
         self.Ydata = []
         self.Xdata = []
         for x in i1.run():
             self.Xdata.append(x[0])
             self.Ydata.append(x[1])
-            # print(data[0],data[1])
-            self.textBrowser.append(str([x[0], x[1]]))
-            self.graphicsView.plot(self.Xdata, self.Ydata, clear=True)
-            QtGui.QApplication.processEvents()
-            print([x[0], x[1]])
+          #  self.textBrowser.append(str([x[0], x[1]]))
+        self.graphicsView.plot(self.Xdata, self.Ydata, clear=True)
+        QtGui.QApplication.processEvents()
+        #    print([x[0], x[1]])
 
     def closeEvent(self, event):
         msg = QMessageBox()
@@ -267,30 +272,38 @@ class Calibrate_window(base_calibrate, form_calibrate):
     def __init__(self):
         super(base_calibrate, self).__init__()
         self.setupUi(self)
-        self.setWindowTitle('Calibrate')
-        self.text_pot.setText('500')
-        self.text_ref.setText('3')
+        self.setWindowTitle('Apply potential')
         self.bt_apply_pot.clicked.connect(self.run_calibrate)
-        self.bt_calibrate.clicked.connect(self.calibrar)
 
     def run_calibrate(self):
+        with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+            config_data = json.loads(config_file.read())
+            dac_summ = float(config_data.get('divider_volt'))
         appott = int(self.text_pot.text())
-        refpott = float(self.text_ref.text())
-        calibrar =  calibrator(applypotential = appott, refpot = refpott)
+        calibrarr =  calibrator(refpot = dac_summ)
         self.bt_apply_pot.disconnect()
         self.bt_apply_pot.setText('Stop')
         self.bt_apply_pot.clicked.connect(self.close_cell)
-        calibrar.apply_pot()
+        calibrarr.apply_pot(appott)
 
     def close_cell(self):
         self.bt_apply_pot.setText('Apply Pot')
         self.bt_apply_pot.clicked.connect(self.run_calibrate)
         GPIO.cleanup()
 
-    def calibrar(self):
-        data = {'divider_volt':(float(self.text_ref.text()))}
-        with open('/home/pi/Desktop/PotenciosPi/configs.json', 'w') as json_file:
-            json.dump(data, json_file)
+
+def calibrate_pot(obj):
+    call = calibrator()
+    ref = call.calibrar()
+    obj.textBrowser.append("Calibrado.\n Ref= {}".format(ref))
+       # data = {'divider_volt':(float(self.text_ref.text()))}
+       # with open('/home/pi/Desktop/PotenciosPi/configs.json', 'w') as json_file:
+       #     json.dump(data, json_file)
+
+def calibrate_freq():
+    frq = freq_calibrator()
+    frq.calibrate()
+
 
 def save(obj):
     name = QFileDialog.getSaveFileName(obj, 'Save File')
@@ -302,7 +315,6 @@ def save(obj):
 
 def slct_GUI(obj, gui):
     if(gui == 'linear'):
-        print('cheguei')
         obj.linear = Linear_window()
         obj.linear.show()
         obj.hide()

@@ -12,8 +12,8 @@ class AdcDac:
         self.adcdac.set_adc_refvoltage(3.3)
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
-        GPIO.setup(29, GPIO.OUT)
-        GPIO.output(29, 1)
+        GPIO.setup(31, GPIO.OUT)
+        GPIO.output(31, 1)
         time.sleep(0.1)
 
     def readADC(self):

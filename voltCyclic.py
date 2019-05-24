@@ -96,19 +96,19 @@ class CyclicVoltametry:
         _time = float(self._stepVolt/self._scanRate)
 
         if (self._ganho == 1):
-            self._resistor = 47 
+            self._resistor = 71900
         
         elif(self._ganho == 2):
-            self._resistor = 470
+            self._resistor = 27000
         
         elif(self._ganho == 3):
-            self._resistor = 2700
+            self._resistor = 56000
         
         elif(self._ganho == 4):
-            self._resistor = 17700
+            self._resistor = 56000
         
         elif(self._ganho == 5):
-            self._resistor = 470000
+            self._resistor = 560000
 
         _tempo = 0
     

@@ -20,6 +20,7 @@ form_linear, base_linear = uic.loadUiType('/home/pi/Desktop/PotenciosPi/Linear_w
 form_cyclic, base_cyclic = uic.loadUiType('/home/pi/Desktop/PotenciosPi/Cyclic_window.ui')
 form_SQW, base_SQW = uic.loadUiType('/home/pi/Desktop/PotenciosPi/SQW_window.ui')
 form_calibrate, base_calibrate = uic.loadUiType('/home/pi/Desktop/PotenciosPi/Calibrate_window.ui')
+form_visualize, base_visualize = uic.loadUiType('/home/pi/Desktop/PotenciosPi/data_visualizer.ui')
 
 class main_window(form_main, base_main):
     def __init__(self):
@@ -29,6 +30,8 @@ class main_window(form_main, base_main):
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
         self.actionCalibrate.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
+        #self.actionOpen.triggered.connect(partial(slct_GUI, obj=self, gui='data'))
+        self.actionOpen.triggered.connect(partial(open_data, obj=self))
         self.actionExit.triggered.connect(self.close)
 
     def closeEvent(self, event):
@@ -42,7 +45,42 @@ class main_window(form_main, base_main):
         else:
             event.ignore()
 
+class data_visualizer(form_visualize, base_visualize):
+    def __init__(self, files):
+        super(base_main, self).__init__()
+        self.setupUi(self)
+        self.slct_linear.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
+        self.slct_cyclic.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
+        self.slct_sqw.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
+        self.files = files
+        self.read_files()
 
+    def read_files(self):
+        all_data = [[]for i in range(len(self.files[0]))]   #Cria uma lista de lsitas que contem o msm numero de listas que arquivos 
+        x = []
+        for i in range(len(self.files[0])):
+            with open((self.files[0])[i]) as data:
+                data_lines = (data.readlines())
+                for(line) in (data_lines):
+                    if(i <= 0):
+                        x.append(float(line.split(',')[0]))
+                        all_data[i].append(float(line.split(',')[1]))
+                    elif(i > 0):
+                        all_data[i].append(float(line.split(',')[1]))
+            print(i)
+        self.graphicsView.plot(x, (all_data[0]), clear=False)
+        self.graphicsView.plot(x, (all_data[1]), clear=False)
+        self.graphicsView.plot(x, (all_data[2]), clear=False)
+    #    print(all_data[1])
+        print(len(x), len(all_data[0]))
+
+    def closeEvent(self, event):
+        msg = QMessageBox()
+        message = "Are you sure?"
+        msg = msg.information(self, 'Exit?', message, QMessageBox.Yes, QMessageBox.No)
+        if msg == QMessageBox.Yes:
+            super(base_main, self).closeEvent(event)  # CHama a função original do PyQt ao invés de sobre escrevela totalemnte
+            event.accept()
 
 class Linear_window(form_linear, base_linear):
     def __init__(self):
@@ -53,6 +91,8 @@ class Linear_window(form_linear, base_linear):
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
         self.applypot.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
+        self.actionOpen.triggered.connect(partial(open_data, obj=self))  
+ #       self.actionOpen.triggered.connect(partial(slct_GUI, obj=self, gui='data'))
         self.actionCalibrate.triggered.connect(partial(calibrate_pot, obj=self))
         self.actionSave.triggered.connect(partial(save, obj=self))
         self.pushButton_2.clicked.connect(self.run_linear)
@@ -127,6 +167,8 @@ class Cyclic_window(form_cyclic, base_cyclic):
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
+#        self.actionOpen.triggered.connect(partial(slct_GUI, obj=self, gui='data'))
+        self.actionOpen.triggered.connect(partial(open_data, obj=self))
         self.applypot.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
         self.actionCalibrate.triggered.connect(partial(calibrate_pot, obj=self))
         self.actionSave.triggered.connect(partial(save, obj=self))
@@ -197,6 +239,8 @@ class SQW_window(form_SQW,base_SQW):
         self.actionLinear_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='linear'))
         self.actionCyclic_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='cyclic'))
         self.actionSquare_Wave_Voltametry.triggered.connect(partial(slct_GUI, obj=self, gui='sqw'))
+        self.actionOpen.triggered.connect(partial(open_data, obj=self))
+       # self.actionOpen.triggered.connect(partial(slct_GUI, obj=self, gui='data'))
         self.applypot.triggered.connect(partial(slct_GUI, obj=self, gui='calibrate'))
         self.actionCalibrate.triggered.connect(partial(calibrate_pot, obj=self))
         self.pushButton.clicked.connect(self.stop)
@@ -309,6 +353,9 @@ def calibrate_freq():
     frq = freq_calibrator()
     frq.calibrate()
 
+def open_data(obj):
+    files = QFileDialog.getOpenFileNames(obj, "Open File", filter='csv(*.csv)')
+    slct_GUI(obj=obj, gui='data', files = files)
 
 def save(obj):
     name = QFileDialog.getSaveFileName(obj, 'Save File')
@@ -318,7 +365,7 @@ def save(obj):
             writer.writerow([obj.Xdata[i], obj.Ydata[i]])
 
 
-def slct_GUI(obj, gui):
+def slct_GUI(obj, gui, files = 0):
     if(gui == 'linear'):
         obj.linear = Linear_window()
         obj.linear.show()
@@ -333,9 +380,15 @@ def slct_GUI(obj, gui):
         obj.sqw = SQW_window()
         obj.sqw.show()
         obj.hide()
+
     elif(gui == 'calibrate'):
         obj.calibrate = Calibrate_window()
         obj.calibrate.show()
+
+    elif(gui == 'data'):
+        obj.data = data_visualizer(files)
+        obj.data.show()
+        obj.hide()
 
 
 if __name__ == '__main__':

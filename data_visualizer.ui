@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>804</width>
+    <height>689</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="PlotWidget" name="graphicsView">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>80</y>
+      <width>741</width>
+      <height>541</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>10</y>
+      <width>321</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:28pt;&quot;&gt;Data visualizer&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:28pt;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_2">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>50</y>
+      <width>741</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>804</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="ex_xlsx"/>
+    <addaction name="ex_csv"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuMethods">
+    <property name="title">
+     <string>Methods</string>
+    </property>
+    <addaction name="slct_linear"/>
+    <addaction name="slct_cyclic"/>
+    <addaction name="slct_sqw"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menuMethods"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="ex_xlsx">
+   <property name="text">
+    <string>.xlsx(excel)</string>
+   </property>
+  </action>
+  <action name="ex_csv">
+   <property name="text">
+    <string>.csv</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionLinear_Voltametry">
+   <property name="text">
+    <string>Linear Voltametry</string>
+   </property>
+  </action>
+  <action name="actionCyclic_Voltametry">
+   <property name="text">
+    <string>Cyclic Voltametry</string>
+   </property>
+  </action>
+  <action name="actionSquare_Wave_Voltametry">
+   <property name="text">
+    <string>Square Wave Voltametry</string>
+   </property>
+  </action>
+  <action name="actionCalibrate">
+   <property name="text">
+    <string>Calibrate Potential</string>
+   </property>
+  </action>
+  <action name="applypot">
+   <property name="text">
+    <string>Apply potential</string>
+   </property>
+  </action>
+  <action name="slct_linear">
+   <property name="text">
+    <string>Linear Voltametry</string>
+   </property>
+  </action>
+  <action name="slct_cyclic">
+   <property name="text">
+    <string>Cyclic Voltametry</string>
+   </property>
+  </action>
+  <action name="slct_sqw">
+   <property name="text">
+    <string>Square Wave Voltametry</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QGraphicsView</extends>
+   <header>pyqtgraph</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

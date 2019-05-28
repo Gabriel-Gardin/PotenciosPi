@@ -2,6 +2,7 @@
 from adcdac_module import AdcDac
 import RPi.GPIO as GPIO
 import time
+import json
 
 class LinearVoltametry:
     started = False
@@ -15,6 +16,22 @@ class LinearVoltametry:
         self.scanRate = scanRate
         self.ganho = ganho
         self._adcdac = AdcDac()
+
+        if (self._ganho == 1):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor1'))
+        
+        elif(self._ganho == 2):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor2'))
+        
+        elif(self._ganho == 3):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor3'))
+        
+        elif(self._ganho == 4):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor4'))
         
     @property
     def dac_sum(self):
@@ -90,80 +107,50 @@ class LinearVoltametry:
         self._ganho = var
 
     def run(self):
-        #LinearVoltametry.started = True
-        print(LinearVoltametry.started)
-        while(LinearVoltametry.started == True):
-            print(LinearVoltametry.started)
-            _time = float(self._stepVolt/self._scanRate)
-            
-#            self._resistor = int(4.7 * (10 ** self._ganho))
+        _time = float(self._stepVolt/self._scanRate)
+        _tempo = 0
+        potencialAp = self._potIni
+        if self._potIni < self._potFin:
+            tempo_inicial = time.time()
+            while (potencialAp <= self._potFin and LinearVoltametry.started == True):
+                potencial = (potencialAp/1000)
+                potR = self._dac_sum + potencial
+                _nowTime = time.time()
+                self._adcdac.applyPot(potR)
+                potencialAp = potencialAp + self._stepVolt
+                somacorrente = 0
+                for ii in range(self._acq_points):
+                    leitura = self._adcdac.readADC()
+                    if ii > self._delay_points:
+                        somacorrente = leitura + somacorrente
+                somacorrente = somacorrente / (self._acq_points - self._delay_points)
+                sinal = (somacorrente - self.dac_sum) / self._resistor
+                _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime) #Compara o tempo que a função ficou "inativa"(_nowTIme - _tempo) e soma ao tempo que a função perdeu aplicando o potencial(time.time() - _nowTime)
+                if(_elapsed_time < _time):
+                    time.sleep(_time - _elapsed_time)
 
-            if (self._ganho == 1):
-                self._resistor = 47 
-            
-            elif(self._ganho == 2):
-                self._resistor = 470
-            
-            elif(self._ganho == 3):
-                self._resistor = 4700
-            
-            elif(self._ganho == 4):
-                self._resistor = 47000
-            
-            elif(self._ganho == 5):
-                self._resistor = 470000
+                _tempo = time.time()
+                yield((1000 * potencial), (1000 * sinal))
 
-            _tempo = 0
-        
-            if self._potIni < self._potFin:
-                tempo_inicial = time.time()
-                potencialAp = self._potIni
-                while (potencialAp <= self._potFin and LinearVoltametry.started == True):
-                    #print("voltei")                
-                    potencial = (potencialAp/1000)
-                    potR = self._dac_sum - potencial
-                    _nowTime = time.time()
-                    self._adcdac.applyPot(potR)
-                    potencialAp = potencialAp + self._stepVolt
-                    somacorrente = 0
-                    for ii in range(self._acq_points):
-                        if ii > self._delay_points:
-                            somacorrente = self._adcdac.readADC() + somacorrente
-                    somacorrente = somacorrente / (self._acq_points - self._delay_points)
-                    sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
-                    #print(("E=", round((1000*potencial), 2), "mv", "AND i=", round((1000 * sinal), 5), "mA"))
-                    #self.updateValues(potencial, sinal)
-                    _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime) #Compara o tempo que a função ficou "inativa"(_nowTIme - _tempo) e soma ao tempo que a função perdeu aplicando o potencial(time.time() - _nowTime)
-                    #_elapsed_time = time.time() - _nowTime
-                    if(_elapsed_time < _time):
-                        time.sleep(_time - _elapsed_time)
-
-                    _tempo = time.time()
-                    yield((1000 * potencial), (1000 * sinal))
-
-            elif self.potIni > self.potFin:
-                tempo_inicial = time.time()
-                potencialAp = self._potIni
-                while (potencialAp >= self._potFin and LinearVoltametry.started == True):
-                    _nowTime = time.time()
-                    potencial = (potencialAp/1000)
-                    potR = self._dac_sum - potencial
-                    _nowTime = time.time()
-                    self._adcdac.applyPot(potR)
-                    potencialAp = potencialAp - self._stepVolt
-                    somacorrente = 0
-                    for ii in range(self._acq_points):
-                        if ii > self._delay_points:
-                            somacorrente = self._adcdac.readADC() + somacorrente
-                    somacorrente = somacorrente / (self._acq_points - self._delay_points)
-                    sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
-                    #print(("E=", round((1000*potencial), 2), "mv", "AND i=", round((1000 * sinal), 5), "mA"))
-                    #self.updateValues(potencial, sinal)
-                    _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime) #Compara o tempo que a função ficou "inativa"(_nowTIme - _tempo) e soma ao tempo que a função perdeu aplicando o potencial(time.time() - _nowTime)
-                    if(_elapsed_time < _time):
-                        time.sleep(_time - _elapsed_time)
-                    _tempo = time.time()
-                    yield((1000 * potencial), (1000 * sinal))
+        elif self._potIni > self._potFin:
+            tempo_inicial = time.time()
+            while (potencialAp >= self._potFin and LinearVoltametry.started == True):
+                potencial = (potencialAp/1000)
+                potR = self._dac_sum - potencial
+                _nowTime = time.time()
+                self._adcdac.applyPot(potR)
+                potencialAp = potencialAp - self._stepVolt
+                somacorrente = 0
+                for ii in range(self._acq_points):  
+                    if ii > self._delay_points:
+                        somacorrente = self._adcdac.readADC() + somacorrente
+                somacorrente = somacorrente / (self._acq_points - self._delay_points)
+                sinal = (somacorrente) / self._resistor
+                _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime) #Compara o tempo que a função ficou "inativa"(_nowTIme - _tempo) e soma ao tempo que a função perdeu aplicando o potencial(time.time() - _nowTime)
+                if(_elapsed_time < _time):
+                    time.sleep(_time - _elapsed_time)
+                _tempo = time.time()
+                yield((1000 * potencial), (1000 * sinal))
 
             LinearVoltametry.started = False
             GPIO.cleanup()

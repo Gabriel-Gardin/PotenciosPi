@@ -10,7 +10,7 @@ from voltCalibrate import CalibratePotential as calibrator
 from calibrate_freq import CalibrateFreq as freq_calibrator
 import pyqtgraph as pg
 from PreDeposition import PreDeposition
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIOu
 import json
 
 pg.setConfigOption('background', 'w')
@@ -103,11 +103,11 @@ class Linear_window(form_linear, base_linear):
         for x in i1.run():
             self.Xdata.append(x[0])
             self.Ydata.append(x[1])
-            print(self.Xdata[0],self.Ydata[0])
-            self.textBrowser.append(str([x[0],x[1]]))
+   #         print(self.Xdata[0],self.Ydata[0])
+   #         self.textBrowser.append(str([x[0],x[1]]))
             self.graphicsView.plot(self.Xdata, self.Ydata, clear=True)
             QtGui.QApplication.processEvents()
-            print([x[0],x[1]])
+    #        print([x[0],x[1]])
 
     def closeEvent(self, event):
         msg = QMessageBox()

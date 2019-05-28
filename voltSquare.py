@@ -2,6 +2,7 @@
 from adcdac_module import AdcDac
 import RPi.GPIO as GPIO
 import time
+import json
 
 class SquareWaveVoltametry:
     started = False
@@ -19,6 +20,21 @@ class SquareWaveVoltametry:
         self.postPot = postPot
         self.postTime = postTime
         self._adcdac = AdcDac()
+        if (self._ganho == 1):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor1'))
+        
+        elif(self._ganho == 2):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor2'))
+        
+        elif(self._ganho == 3):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor3'))
+        
+        elif(self._ganho == 4):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor4'))
     
         
     @property
@@ -131,27 +147,12 @@ class SquareWaveVoltametry:
         self._postTime = var
 
     def run(self):
-        if (self._ganho == 1):
-            self._resistor = 1000 
-        
-        elif(self._ganho == 2):
-            self._resistor = 4700
-        
-        elif(self._ganho == 3):
-            self._resistor = 47000
-        
-        elif(self._ganho == 4):
-            self._resistor = 100000
-        
-        elif(self._ganho == 5):
-            self._resistor = 470000
-    
         potencialAp = self._potIni
         ampCorr = self._ampP/1000
         cont = 0
         frequency_time = 1/self._freq
         _delay_points = ((frequency_time/self._acq_time) - self._acq_points) / 2
-        if self.potIni<self._potFin:
+        if self.potIni < self._potFin:
             _t0 = time.time()
             while (potencialAp <= self._potFin and SquareWaveVoltametry.started == True):
                 cont += 1
@@ -186,6 +187,45 @@ class SquareWaveVoltametry:
                 correnteSQW = corrente - corrente2
                 potencialAp = potencialAp + self.stepVolt
                 yield (1000*potencial),(1000*correnteSQW)
+
+        elif self._potIni > self._potFin:
+            _t0 = time.time()
+            while (potencialAp >= self._potFin and SquareWaveVoltametry.started == True):
+                cont += 1
+                potencial = (potencialAp/1000)
+                pulso1 = potencial - ampCorr - self.stepVolt/1000
+                potR = (self._dac_sum + pulso1)
+                self._adcdac.applyPot(potR)
+                print("pot la e", potR)
+                somacorrente = 0
+                for ii in range(self._acq_points):
+                    leitura = self._adcdac.readADC()
+                    if ii > self._delay_points:
+                        somacorrente += leitura
+                for i in range(int(_delay_points)):
+                    self._adcdac.readADC()
+                
+                somacorrente = somacorrente /(self._acq_points - self._delay_points)
+                corrente = somacorrente/self._resistor
+                potencial = potencialAp/1000
+                pulso2 = pulso1 + ampCorr
+                potR = self._dac_sum +  pulso2
+                self._adcdac.applyPot(potR)
+                print("pot aqui e", potR)
+                somacorrente = 0
+                for ii in range(self._acq_points):
+                    leitura = self._adcdac.readADC()
+                    if ii > self._delay_points:
+                        somacorrente += leitura
+                for i in range(int(_delay_points)):
+                    self._adcdac.readADC()
+
+                somacorrente = somacorrente / (self._acq_points - self._delay_points)
+                corrente2 = -somacorrente/self._resistor
+                correnteSQW = corrente - corrente2
+                potencialAp = potencialAp - self.stepVolt
+                yield (1000*potencial),(1000*correnteSQW)
+            
         _t = time.time()
         self._adcdac.applyPot((self._postPot/1000)+self._dac_sum)
         time.sleep(self._postTime)

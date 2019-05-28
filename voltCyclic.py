@@ -2,6 +2,7 @@
 from adcdac_module import AdcDac
 import RPi.GPIO as GPIO
 import time
+import json 
 
 class CyclicVoltametry:
     started = False
@@ -15,6 +16,22 @@ class CyclicVoltametry:
         self.scanRate = scanRate
         self.ganho = ganho
         self._adcdac = AdcDac()
+
+        if (self._ganho == 1):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor1'))
+        
+        elif(self._ganho == 2):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor2'))
+        
+        elif(self._ganho == 3):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor3'))
+        
+        elif(self._ganho == 4):
+            with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
+                self._resistor = float((json.loads(config_file.read())).get('resistor4'))
 
        
     @property
@@ -94,24 +111,7 @@ class CyclicVoltametry:
 
     def run(self):
         _time = float(self._stepVolt/self._scanRate)
-
-        if (self._ganho == 1):
-            self._resistor = 1000
-        
-        elif(self._ganho == 2):
-            self._resistor = 4700
-        
-        elif(self._ganho == 3):
-            self._resistor = 47000
-        
-        elif(self._ganho == 4):
-            self._resistor = 100000
-        
-        elif(self._ganho == 5):
-            self._resistor = 560000
-
         _tempo = 0
-    
         potencialAp = self._potIni
         if self._potIni < self._potFin:
             tempo_inicial = time.time()
@@ -168,7 +168,7 @@ class CyclicVoltametry:
                     if ii > self._delay_points:
                         somacorrente = self._adcdac.readADC() + somacorrente
                 somacorrente = somacorrente / (self._acq_points - self._delay_points)
-                sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
+                sinal = (somacorrente) / self._resistor
                 _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime) #Compara o tempo que a função ficou "inativa"(_nowTIme - _tempo) e soma ao tempo que a função perdeu aplicando o potencial(time.time() - _nowTime)
                 if(_elapsed_time < _time):
                     time.sleep(_time - _elapsed_time)
@@ -187,7 +187,7 @@ class CyclicVoltametry:
                     if ii > self._delay_points:
                         somacorrente = self._adcdac.readADC() + somacorrente
                 somacorrente = somacorrente / (self._acq_points - self._delay_points)
-                sinal = (somacorrente) / self._resistor    #TODO VERIFICAR ESTA PARTE!!!!
+                sinal = (somacorrente) / self._resistor
                 _elapsed_time = (_nowTime - _tempo) + (time.time() - _nowTime)
                 if(_elapsed_time < _time):
                     time.sleep(_time - _elapsed_time)

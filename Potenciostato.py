@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import QApplication, QMessageBox, QFileDialog
 from functools import partial
@@ -303,6 +304,8 @@ class SQW_window(form_SQW,base_SQW):
             config_data = json.loads(config_file.read())
             dac_summ = float(config_data.get('divider_volt'))
             data_read_time = float(config_data.get("read_voltage_time"))
+            acq_points = float(config_data.get("acquire_points"))
+            delay_points = float(config_data.get("delay_points"))
 
         if(self.checkBox.isChecked()):
             preCond = int(self.ECond.text())
@@ -313,8 +316,7 @@ class SQW_window(form_SQW,base_SQW):
             i2 = PreDeposition(pot_cond = preCond, time_cond = pre_time_cond, pre_dep_pot=pot_pre_dep, 
             pre_dep_time = pre_deposition_time, somadorDA = dac_summ)
             i2.run()
-        i1 = SquareWaveVoltametry(dac_sum=dac_summ,acq_points=300,delay_points=10,
-            potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,ampP=sqw_amplitude,
+        i1 = SquareWaveVoltametry(dac_sum=dac_summ, acq_points = acq_points, delay_points =delay_points, potIni=potInii,potFin=potFinn,stepVolt=potStepp,ganho=ganhoo,ampP=sqw_amplitude,
             freq=sqw_frequency, acq_time=data_read_time,postPot = post_pot, postTime=post_time)
 
         self.all_data = [[]for i in range(4)]

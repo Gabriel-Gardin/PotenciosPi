@@ -5,6 +5,7 @@ import json
 
 class CalibrateFreq:
     """
+    Class responsible by calculate the 
     Classe responsável por calcular o tempo necessário para a leitura de um pulso. 
     Isto é necessário uma vez que é através do tempo que se leva para realizar a leitura de um ponto de corrente,
     que controlamos a frequencia da onda quadrada e o delay nas voltametrias linear e cíclica. 

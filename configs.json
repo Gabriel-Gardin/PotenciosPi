@@ -1,1 +1,1 @@
-{"read_voltage_time": 9.204488277435302e-05, "resistor2": 4700, "resistor3": 47000, "divider_volt": 1.6524, "resistor1": 300000, "resistor4": 100000}
+{"delay_points": 10,"acquire_points": 50,"resistor1": 300000, "resistor3": 47000, "read_voltage_time": 9.198708534240723e-05, "divider_volt": 1.6468, "resistor4": 100000, "resistor2": 4700}

@@ -60,11 +60,11 @@ class PreDeposition:
 
     def run(self):
         _potAp = self._pot_cond/1000
-        _potAp = (self._somadorDA - _potAp)
+        _potAp = (self._somadorDA + _potAp)
         self._adcdac.applyPot(_potAp)
         time.sleep(self._time_cond)
 
-        _potAp - self._pre_dep_pot/1000
-        _potAp = (self._somadorDA - _potAp)
+        _potAp = self._pre_dep_pot/1000
+        _potAp = (self._somadorDA + _potAp)
         self._adcdac.applyPot(_potAp)
         time.sleep(self._pre_dep_time)

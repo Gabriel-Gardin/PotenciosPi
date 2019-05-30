@@ -130,7 +130,7 @@ class LinearVoltametry:
                     time.sleep(_time - _elapsed_time)
 
                 _tempo = time.time()
-                yield((1000 * potencial), (1000 * sinal))
+                yield((potencial), (1000 * sinal))
 
         elif self._potIni > self._potFin:
             tempo_inicial = time.time()
@@ -150,7 +150,7 @@ class LinearVoltametry:
                 if(_elapsed_time < _time):
                     time.sleep(_time - _elapsed_time)
                 _tempo = time.time()
-                yield((1000 * potencial), (1000 * sinal))
+                yield((potencial), (1000 * sinal))
 
             LinearVoltametry.started = False
             GPIO.cleanup()

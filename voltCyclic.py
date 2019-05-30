@@ -133,7 +133,7 @@ class CyclicVoltametry:
                     time.sleep(_time - _elapsed_time)
 
                 _tempo = time.time()
-                yield((1000 * potencial), (1000 * sinal))
+                yield((potencial), (1000 * sinal))
                 
             potencialAp = potencialAp - (2*self._stepVolt)
             while (potencialAp >= self._potIni and CyclicVoltametry.started == True):
@@ -153,7 +153,7 @@ class CyclicVoltametry:
                 if(_elapsed_time < _time):
                     time.sleep(_time - _elapsed_time)
                 _tempo = time.time()
-                yield((1000 * potencial), (1000 * sinal))
+                yield((potencial), (1000 * sinal))
 
         elif self._potIni > self._potFin:
             tempo_inicial = time.time()
@@ -173,7 +173,7 @@ class CyclicVoltametry:
                 if(_elapsed_time < _time):
                     time.sleep(_time - _elapsed_time)
                 _tempo = time.time()
-                yield((1000 * potencial), (1000 * sinal))
+                yield((potencial), (1000 * sinal))
                 
             potencialAp = potencialAp + (2*self._stepVolt)
             while (potencialAp <= self._potIni and CyclicVoltametry.started == True):
@@ -192,7 +192,6 @@ class CyclicVoltametry:
                 if(_elapsed_time < _time):
                     time.sleep(_time - _elapsed_time)
                 _tempo = time.time() 
-                yield((1000 * potencial), (1000 * sinal))
+                yield((potencial), (1000 * sinal))
         GPIO.cleanup()
         print(tempo_inicial - time.time())
-        CyclicVoltametry.started = False

@@ -186,7 +186,7 @@ class SquareWaveVoltametry:
                 corrente2 = -somacorrente/self._resistor
                 correnteSQW = corrente - corrente2
                 potencialAp = potencialAp + self.stepVolt
-                yield (1000*potencial),(1000*correnteSQW)
+                yield (potencial),(1000*correnteSQW),(corrente*1000),(corrente2*1000)
 
         elif self._potIni > self._potFin:
             _t0 = time.time()
@@ -224,7 +224,7 @@ class SquareWaveVoltametry:
                 corrente2 = -somacorrente/self._resistor
                 correnteSQW = corrente - corrente2
                 potencialAp = potencialAp - self.stepVolt
-                yield (1000*potencial),(1000*correnteSQW)
+                yield (potencial),(1000*correnteSQW),(corrente*1000),(corrente2*1000)
             
         _t = time.time()
         self._adcdac.applyPot((self._postPot/1000)+self._dac_sum)

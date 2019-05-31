@@ -155,7 +155,6 @@ class SquareWaveVoltametry:
         cont = 0
         frequency_time = 1/self._freq
         _time_delay = ((frequency_time/self._acq_time) - self.acq_points) / 2
-       # _delay_points = 300
         if self.potIni < self._potFin:
             _t0 = time.time()
             while (potencialAp <= self._potFin and SquareWaveVoltametry.started == True):

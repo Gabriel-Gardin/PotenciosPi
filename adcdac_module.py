@@ -6,7 +6,7 @@ from ADCDACPi import ADCDACPi
 
 class AdcDac:    
     def __init__(self):
-        """Inicializa o conversor AD/DA"""
+        """Initializes the AD/DA converter"""
         # Gain of the board and reference tension.
         self.adcdac = ADCDACPi(2)
         self.adcdac.set_adc_refvoltage(3.3)

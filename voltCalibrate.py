@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 import json
 
 class CalibratePotential():
-    """Calibra o potencial de referência lendo a tensão do eletrodo de trabalho, e também aplica o potencial desejado"""
+    """Calibrate the voltage divider reference voltage and also apply the desired voltage"""
     def __init__(self, refpot=1.65):
         self.refpot = refpot
         self._adcdac = AdcDac()
@@ -21,16 +21,16 @@ class CalibratePotential():
     @refpot.setter
     def refpot(self, var):
         if (not(isinstance(var, float))):
-            raise(ValueError("A variável refpot{} deve ser do tipo float".format(var)))
+            raise(ValueError("The variable refpot {} must be of type float.".format(var)))
         self._refpot = var
     
     def apply_pot(self, potential):
-        """Aplica o potencial desejado"""
+        """Apply the desired potential"""
         potencial = (self._refpot + potential/1000)          
         self._adcdac.applyPot(potencial)
 
     def calibrar(self):
-        """Calibra o potencial de referência lendo 100 pontos sem aplicar nenhuma tensão e salva no arquivo de configurações"""
+        """Calibrates the reference potential"""
         voltage = 0
         for i in range(500):
             voltage  += self._adcdac.readADC()

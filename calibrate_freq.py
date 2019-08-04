@@ -5,10 +5,9 @@ import json
 
 class CalibrateFreq:
     """
-    Class responsible by calculate the 
-    Classe responsável por calcular o tempo necessário para a leitura de um pulso. 
-    Isto é necessário uma vez que é através do tempo que se leva para realizar a leitura de um ponto de corrente,
-    que controlamos a frequencia da onda quadrada e o delay nas voltametrias linear e cíclica. 
+    Class responsible to calculate the required time to acquire the current.
+    That's neessary because the frequency of the SQW voltametry is calculated using the time required to the ADC to read the voltage.
+    Classe responsável por calcular o tempo necessário para a leitura de um pulso.
     """
     def __init__(self):
         self._adcdac = AdcDac()

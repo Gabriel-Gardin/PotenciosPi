@@ -39,7 +39,7 @@ class LinearVoltametry:
     @dac_sum.setter
     def dac_sum(self, var):
         if(not(isinstance(var,float))):
-            raise ValueError("A variável dac_sum(Potencial inicial) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable dac_sum {} must be of type int".format(var))
         self._dac_sum = var
 
     @property
@@ -48,7 +48,7 @@ class LinearVoltametry:
     @acq_points.setter
     def acq_points(self, var):
         if(not(isinstance(var,int))):
-            raise ValueError("A variável acq_points deve ser do tipo int {}".format(var))
+            raise ValueError("The variable acq_points {} must be of type int".format(var))
         self._acq_points = var
         
     @property
@@ -57,7 +57,7 @@ class LinearVoltametry:
     @delay_points.setter
     def delay_points(self, var):
         if(not(isinstance(var,int))):
-            raise ValueError("A variável delay_points deve ser do tipo int {}".format(var))
+            raise ValueError("The variable delay_points {} must be of type int".format(var))
         self._delay_points = var
 
     @property
@@ -66,7 +66,7 @@ class LinearVoltametry:
     @potIni.setter
     def potIni(self, var):
         if(not(isinstance(var,int))):
-            raise ValueError("A variável potIni(Potencial inicial) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable potIni {} must be of type int".format(var))
         self._potIni = var
 
     @property
@@ -76,7 +76,7 @@ class LinearVoltametry:
     @potFin.setter
     def potFin(self, var):
         if(not(isinstance(var,int))):
-            raise ValueError("A variável potFin(Potencial Final) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable potFin {} must be of type int.".format(var))
         self._potFin = var
 
     @property
@@ -85,7 +85,7 @@ class LinearVoltametry:
     @stepVolt.setter
     def stepVolt(self, var):
         if(not(isinstance(var,int))):
-            raise ValueError("A variável stepVolt(Passo de potencial) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable setpVolt {} must be of type int.".format(var))
         self._stepVolt = var
 
     @property
@@ -94,7 +94,7 @@ class LinearVoltametry:
     @scanRate.setter
     def scanRate(self, var):
         if(not(isinstance(var,int))):
-            raise ValueError("A variável scanRate(Velocidade de scan) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable ScanRate {} must be of type int".format(var))
         self._scanRate = var
 
     @property
@@ -103,15 +103,18 @@ class LinearVoltametry:
     @ganho.setter
     def ganho(self, var):
         if(not(isinstance(var,int))):
-            raise ValueError("A variável ganho deve ser do tipo int {}".format(var))
+            raise ValueError("The variable ganho {} must be of type int".format(var))
+        elif(var <= 0):
+            raise ValueError("The variable gain {} must be greater than 0".format(var))
         self._ganho = var
 
     def run(self):
+        """Funtion that runs a linear voltatry and yields back the data"""
         _time = float(self._stepVolt/self._scanRate)
         _tempo = 0
         potencialAp = self._potIni
         if self._potIni < self._potFin:
-            tempo_inicial = time.time()
+       #     tempo_inicial = time.time()
             while (potencialAp <= self._potFin and LinearVoltametry.started == True):
                 potencial = (potencialAp/1000)
                 potR = self._dac_sum + potencial
@@ -154,8 +157,8 @@ class LinearVoltametry:
 
             LinearVoltametry.started = False
             GPIO.cleanup()
-            tempo_final = time.time()
-            print(tempo_final - tempo_inicial)
+     #       tempo_final = time.time()
+     #       print(tempo_final - tempo_inicial)
         
 
 

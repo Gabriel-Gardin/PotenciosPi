@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 import time
 
 class PreDeposition:
+    """Class resposible of contrlling the pre depositon."""
     def __init__(self,pot_cond, time_cond, pre_dep_pot, pre_dep_time, somadorDA):
         self.pot_cond = pot_cond
         self.time_cond = time_cond
@@ -18,7 +19,7 @@ class PreDeposition:
     @pot_cond.setter
     def pot_cond(self, var):
         if(not(isinstance(var, int))):
-            raise ValueError("A variável pot_cond(Potêncial de condicionamento deve ser inteira){}".format(var))
+            raise ValueError("The variable pot_cond must be of type int {}".format(var))
         self._pot_cond = var
 
     @property
@@ -27,7 +28,7 @@ class PreDeposition:
     @time_cond.setter
     def time_cond(self, var):
         if(not(isinstance(var, int))):
-            raise ValueError("A variável time_cond(Tempo de condicionamento) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable time_cond must be of type int {}".format(var))
         self._time_cond = var
 
     @property
@@ -36,7 +37,7 @@ class PreDeposition:
     @pre_dep_pot.setter
     def pre_dep_pot(self, var):
         if(not(isinstance(var, int))):
-            raise ValueError("A variável pre_dep_pot(Potencial de pré deposição) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable pre_dep_pot must be of type int {}".format(var))
         self._pre_dep_pot = var
 
     @property
@@ -45,7 +46,7 @@ class PreDeposition:
     @pre_dep_time.setter
     def pre_dep_time(self, var):
         if(not(isinstance(var, int))):
-            raise ValueError("A variável pre_dep_time(Tempo de pré deposição) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable pre_dep_time must be of type int {}".format(var))
         self._pre_dep_time = var
 
     @property
@@ -54,7 +55,7 @@ class PreDeposition:
     @somadorDA.setter
     def somadorDA(self, var):
         if(not(isinstance(var, float))):
-            raise ValueError("A variável somadorDA deve ser do tipo float {}".format(var))
+            raise ValueError("The variable somadorDA must be of type int {}".format(var))
         self._somadorDA = var
 
 

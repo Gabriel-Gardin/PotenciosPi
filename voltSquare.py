@@ -35,42 +35,45 @@ class SquareWaveVoltametry:
         elif(self._ganho == 4):
             with open('/home/pi/Desktop/PotenciosPi/configs.json', 'r') as config_file:
                 self._resistor = float((json.loads(config_file.read())).get('resistor4'))
-    
-        
+
     @property
     def dac_sum(self):
         return self._dac_sum
+
     @dac_sum.setter
     def dac_sum(self, var):
-        if(not(isinstance(var,float))):
-            raise ValueError("A variável dac_sum(Potencial inicial) deve ser do tipo int {}".format(var))
+        if (not (isinstance(var, float))):
+            raise ValueError("The variable dac_sum {} must be of type int".format(var))
         self._dac_sum = var
-    
+
     @property
     def acq_points(self):
         return self._acq_points
+
     @acq_points.setter
     def acq_points(self, var):
-        if(not(isinstance(var,int))):
-            raise ValueError("A variável acq_points deve ser do tipo int {}".format(var))
+        if (not (isinstance(var, int))):
+            raise ValueError("The variable acq_points {} must be of type int".format(var))
         self._acq_points = var
-         
+
     @property
     def delay_points(self):
         return self._delay_points
+
     @delay_points.setter
     def delay_points(self, var):
-        if(not(isinstance(var,int))):
-            raise ValueError("A variável delay_points deve ser do tipo int {}".format(var))
+        if (not (isinstance(var, int))):
+            raise ValueError("The variable delay_points {} must be of type int".format(var))
         self._delay_points = var
-    
+
     @property
     def potIni(self):
         return self._potIni
+
     @potIni.setter
     def potIni(self, var):
-        if(not(isinstance(var,int))):
-            raise ValueError("A variável potIni(Potencial inicial) deve ser do tipo int {}".format(var))
+        if (not (isinstance(var, int))):
+            raise ValueError("The variable potIni {} must be of type int".format(var))
         self._potIni = var
 
     @property
@@ -79,27 +82,19 @@ class SquareWaveVoltametry:
 
     @potFin.setter
     def potFin(self, var):
-        if(not(isinstance(var,int))):
-            raise ValueError("A variável potFin(Potencial Final) deve ser do tipo int {}".format(var))
+        if (not (isinstance(var, int))):
+            raise ValueError("The variable potFin {} must be of type int.".format(var))
         self._potFin = var
 
     @property
     def stepVolt(self):
         return self._stepVolt
+
     @stepVolt.setter
     def stepVolt(self, var):
-        if(not(isinstance(var,int))):
-            raise ValueError("A variável stepVolt(Passo de potencial) deve ser do tipo int {}".format(var))
+        if (not (isinstance(var, int))):
+            raise ValueError("The variable setpVolt {} must be of type int.".format(var))
         self._stepVolt = var
-
-    @property
-    def ganho(self):
-        return self._ganho
-    @ganho.setter
-    def ganho(self, var):
-        if(not(isinstance(var,int))):
-            raise ValueError("A variável ganho deve ser do tipo int {}".format(var))
-        self._ganho = var
         
     @property
     def ampP(self):
@@ -107,7 +102,7 @@ class SquareWaveVoltametry:
     @ampP.setter
     def ampP(self, var):
         if(not(isinstance(var,int))):
-            raise ValueError("A variável ampP(Amplitude de varredura) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable ampP {} must be of type int".format(var))
         self._ampP = var
 
     @property
@@ -116,7 +111,7 @@ class SquareWaveVoltametry:
     @freq.setter
     def freq(self, var):
         if(not(isinstance(var,int))):
-            raise ValueError("A variável freq(Frequência de varredura) deve ser do tipo int {}".format(var))
+            raise ValueError("The variable freq {} must be of type int".format(var))
         self._freq = var
 
     @property
@@ -125,7 +120,7 @@ class SquareWaveVoltametry:
     @acq_time.setter
     def acq_time(self, var):
         if(not(isinstance(var,float))):
-            raise ValueError("A variável acq_time(Acquisition time) deve ser do tipo float {}".format(var))
+            raise ValueError("The variable acq_time {} must be of type float".format(var))
         self._acq_time = var
 
     @property
@@ -134,7 +129,7 @@ class SquareWaveVoltametry:
     @postPot.setter
     def postPot(self, var):
         if(not(isinstance(var, int))):
-            raise ValueError("A variavel postPot deve ser do tipo int {}".format(var))
+            raise ValueError("The variable postPot {} must be of type int".format(var))
         self._postPot = var
 
     @property
@@ -143,7 +138,7 @@ class SquareWaveVoltametry:
     @postTime.setter
     def postTime(self, var):
         if(not(isinstance(var, int))):
-            raise ValueError("A variavel postTIme deve ser do tipo int")
+            raise ValueError("The variable postTime {} must be of type int")
         self._postTime = var
 
     def run(self):
@@ -227,7 +222,7 @@ class SquareWaveVoltametry:
                 potencialAp = potencialAp - self.stepVolt
                 yield (potencial),(1000*correnteSQW),(corrente*1000),(corrente2*1000)
             
-        _t = time.time()
+    #    _t = time.time()
         self._adcdac.applyPot((self._postPot/1000)+self._dac_sum)
         time.sleep(self._postTime)
         GPIO.cleanup()
